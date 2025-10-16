@@ -25,7 +25,7 @@ export default function BinarySearchVisualizer() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [eliminatedIndices, setEliminatedIndices] = useState<Set<number>>(new Set());
   const [spriteState, setSpriteState] = useState<SpriteState>('IDLE');
-  const [spritePosition, setSpritePosition] = useState({ x: 100, y: 180 });
+  const [spritePosition, setSpritePosition] = useState({ x: 100, y: 300 });
   const [stepCount, setStepCount] = useState(0);
   const arrayRef = useRef<HTMLDivElement>(null);
 
@@ -49,12 +49,12 @@ export default function BinarySearchVisualizer() {
     setCurrentIndex(null);
     setEliminatedIndices(new Set());
     setSpriteState('IDLE');
-    setSpritePosition({ x: 100, y: 180 });
+    setSpritePosition({ x: 100, y: 300 });
     setStepCount(0);
   };
 
   const getElementPosition = (index: number) => {
-    if (!arrayRef.current) return { x: 100, y: 180 };
+    if (!arrayRef.current) return { x: 100, y: 300 };
     
     const arrayContainer = arrayRef.current;
     const element = arrayContainer.children[index] as HTMLElement;
@@ -65,11 +65,11 @@ export default function BinarySearchVisualizer() {
       
       return {
         x: elementRect.left - containerRect.left + elementRect.width / 2,
-        y: elementRect.top - containerRect.top - 60,
+        y: elementRect.top - containerRect.top + elementRect.height,
       };
     }
     
-    return { x: 100, y: 180 };
+    return { x: 100, y: 300 };
   };
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -85,6 +85,7 @@ export default function BinarySearchVisualizer() {
     let left = 0;
     let right = array.length - 1;
     let steps = 0;
+    let eliminated = new Set<number>();
 
     while (left <= right) {
       steps++;
@@ -114,21 +115,19 @@ export default function BinarySearchVisualizer() {
       setSpriteState('HURT');
       await sleep(400);
       
-      const newEliminated = new Set(eliminatedIndices);
-      
       if (array[mid] < targetNum) {
         for (let i = left; i <= mid; i++) {
-          newEliminated.add(i);
+          eliminated.add(i);
         }
         left = mid + 1;
       } else {
         for (let i = mid; i <= right; i++) {
-          newEliminated.add(i);
+          eliminated.add(i);
         }
         right = mid - 1;
       }
       
-      setEliminatedIndices(newEliminated);
+      setEliminatedIndices(new Set(eliminated));
       setCurrentIndex(null);
       
       await sleep(600);
@@ -171,12 +170,12 @@ export default function BinarySearchVisualizer() {
           </p>
         </div>
 
-        <div className="flex-1 flex items-center justify-center mb-8">
+        <div className="flex-1 flex items-end justify-center mb-8 pb-20">
           <div className="w-full max-w-6xl">
-            <div className="relative min-h-[500px]">
+            <div className="relative min-h-[400px] flex flex-col justify-end">
               <div 
                 ref={arrayRef}
-                className="flex gap-3 justify-center mb-32 flex-wrap"
+                className="flex gap-3 justify-center flex-wrap"
               >
                 {array.map((value, index) => (
                   <ArrayElement
@@ -193,7 +192,7 @@ export default function BinarySearchVisualizer() {
               <SpriteAnimation
                 state={spriteState}
                 position={spritePosition}
-                scale={3}
+                scale={5}
               />
             </div>
           </div>

@@ -76,15 +76,15 @@ export default function SpriteAnimation({
         top: `${position.y}px`,
         width: `${dimensions.width * scale}px`,
         height: `${dimensions.height * scale}px`,
-        transform: 'translate(-50%, -50%)',
+        transform: 'translate(-50%, -100%)',
       }}
     >
       <div
         className="w-full h-full"
         style={{
           backgroundImage: `url(${getSpriteSheet()})`,
-          backgroundPosition: `-${currentFrame * dimensions.width}px 0`,
-          backgroundSize: `${dimensions.width * frames}px ${dimensions.height}px`,
+          backgroundPosition: `-${currentFrame * dimensions.width * scale}px 0`,
+          backgroundSize: `${dimensions.width * frames * scale}px ${dimensions.height * scale}px`,
           backgroundRepeat: 'no-repeat',
           imageRendering: 'pixelated',
         }}
