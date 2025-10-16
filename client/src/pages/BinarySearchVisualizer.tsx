@@ -25,7 +25,7 @@ export default function BinarySearchVisualizer() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [eliminatedIndices, setEliminatedIndices] = useState<Set<number>>(new Set());
   const [spriteState, setSpriteState] = useState<SpriteState>('IDLE');
-  const [spritePosition, setSpritePosition] = useState({ x: 100, y: 300 });
+  const [spritePosition, setSpritePosition] = useState({ x: 50, y: 300 });
   const [stepCount, setStepCount] = useState(0);
   const arrayRef = useRef<HTMLDivElement>(null);
 
@@ -49,12 +49,12 @@ export default function BinarySearchVisualizer() {
     setCurrentIndex(null);
     setEliminatedIndices(new Set());
     setSpriteState('IDLE');
-    setSpritePosition({ x: 100, y: 300 });
+    setSpritePosition({ x: 50, y: 300 });
     setStepCount(0);
   };
 
   const getElementPosition = (index: number) => {
-    if (!arrayRef.current) return { x: 100, y: 300 };
+    if (!arrayRef.current) return { x: 50, y: 300 };
     
     const arrayContainer = arrayRef.current;
     const element = arrayContainer.children[index] as HTMLElement;
@@ -69,7 +69,7 @@ export default function BinarySearchVisualizer() {
       };
     }
     
-    return { x: 100, y: 300 };
+    return { x: 50, y: 300 };
   };
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -97,23 +97,23 @@ export default function BinarySearchVisualizer() {
       const midPosition = getElementPosition(mid);
       setSpritePosition(midPosition);
       
-      await sleep(600);
+      await sleep(1200);
       
       setSpriteState('IDLE');
       setCurrentIndex(mid);
       
-      await sleep(800);
+      await sleep(1200);
 
       if (array[mid] === targetNum) {
         setSpriteState('ATTACK');
         setSearchState('found');
-        await sleep(1000);
+        await sleep(1500);
         setSpriteState('IDLE');
         return;
       }
 
       setSpriteState('HURT');
-      await sleep(400);
+      await sleep(800);
       
       if (array[mid] < targetNum) {
         for (let i = left; i <= mid; i++) {
@@ -130,14 +130,18 @@ export default function BinarySearchVisualizer() {
       setEliminatedIndices(new Set(eliminated));
       setCurrentIndex(null);
       
-      await sleep(600);
+      await sleep(800);
+      
+      setSpriteState('RUN');
+      setSpritePosition({ x: 50, y: spritePosition.y });
+      await sleep(1000);
       setSpriteState('IDLE');
-      await sleep(200);
+      await sleep(400);
     }
 
     setSearchState('notfound');
     setSpriteState('HURT');
-    await sleep(800);
+    await sleep(1200);
     setSpriteState('IDLE');
   };
 
@@ -160,8 +164,8 @@ export default function BinarySearchVisualizer() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col px-4 py-8">
-        <div className="text-center mb-8">
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <div className="text-center py-8 px-4">
           <h1 className="text-5xl md:text-6xl font-display font-bold text-white mb-4 drop-shadow-lg" data-testid="text-title">
             Binary Search Adventure
           </h1>
@@ -170,84 +174,86 @@ export default function BinarySearchVisualizer() {
           </p>
         </div>
 
-        <div className="flex-1 flex items-end justify-center mb-8 pb-20">
-          <div className="w-full max-w-6xl">
-            <div className="relative min-h-[400px] flex flex-col justify-end">
-              <div 
-                ref={arrayRef}
-                className="flex gap-3 justify-center flex-wrap"
-              >
-                {array.map((value, index) => (
-                  <ArrayElement
-                    key={index}
-                    value={value}
-                    index={index}
-                    isActive={currentIndex === index}
-                    isTarget={searchState === 'found' && currentIndex === index}
-                    isEliminated={eliminatedIndices.has(index)}
-                  />
-                ))}
-              </div>
+        <div className="flex-1 flex">
+          <div className="flex-1 flex flex-col justify-end pb-12 px-4">
+            <div className="w-full">
+              <div className="relative min-h-[400px] flex flex-col justify-end">
+                <div 
+                  ref={arrayRef}
+                  className="flex gap-3 justify-center flex-wrap mb-4"
+                >
+                  {array.map((value, index) => (
+                    <ArrayElement
+                      key={index}
+                      value={value}
+                      index={index}
+                      isActive={currentIndex === index}
+                      isTarget={searchState === 'found' && currentIndex === index}
+                      isEliminated={eliminatedIndices.has(index)}
+                    />
+                  ))}
+                </div>
 
-              <SpriteAnimation
-                state={spriteState}
-                position={spritePosition}
-                scale={5}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <Card className="p-6 w-full max-w-md bg-card/90 backdrop-blur-sm">
-            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Search Controls</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Target Number</label>
-                <Input
-                  type="number"
-                  value={target}
-                  onChange={(e) => setTarget(e.target.value)}
-                  disabled={searchState === 'searching'}
-                  className="font-mono"
-                  data-testid="input-target"
+                <SpriteAnimation
+                  state={spriteState}
+                  position={spritePosition}
+                  scale={5}
                 />
               </div>
-
-              <Button
-                onClick={startSearch}
-                disabled={searchState === 'searching'}
-                className="w-full"
-                data-testid="button-search"
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Start Search
-              </Button>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={generateNewArray}
-                  disabled={searchState === 'searching'}
-                  variant="outline"
-                  data-testid="button-new-array"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  New Array
-                </Button>
-
-                <Button
-                  onClick={resetSearch}
-                  disabled={searchState === 'searching'}
-                  variant="outline"
-                  data-testid="button-reset"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset
-                </Button>
-              </div>
             </div>
-          </Card>
+          </div>
+
+          <div className="w-80 p-6 flex items-end pb-12">
+            <Card className="p-6 w-full bg-card/90 backdrop-blur-sm">
+              <h3 className="text-lg font-semibold mb-4 text-card-foreground">Search Controls</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Target Number</label>
+                  <Input
+                    type="number"
+                    value={target}
+                    onChange={(e) => setTarget(e.target.value)}
+                    disabled={searchState === 'searching'}
+                    className="font-mono"
+                    data-testid="input-target"
+                  />
+                </div>
+
+                <Button
+                  onClick={startSearch}
+                  disabled={searchState === 'searching'}
+                  className="w-full"
+                  data-testid="button-search"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Start Search
+                </Button>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={generateNewArray}
+                    disabled={searchState === 'searching'}
+                    variant="outline"
+                    data-testid="button-new-array"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    New Array
+                  </Button>
+
+                  <Button
+                    onClick={resetSearch}
+                    disabled={searchState === 'searching'}
+                    variant="outline"
+                    data-testid="button-reset"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Reset
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
