@@ -1,4 +1,8 @@
 import { useEffect, useState } from 'react';
+import idleSprite from '@assets/IDLE_1760629410247.png';
+import runSprite from '@assets/RUN_1760629410248.png';
+import attackSprite from '@assets/ATTACK 1_1760629410245.png';
+import hurtSprite from '@assets/HURT_1760629410246.png';
 
 export type SpriteState = 'IDLE' | 'RUN' | 'ATTACK' | 'HURT';
 
@@ -21,6 +25,13 @@ const SPRITE_DIMENSIONS = {
   RUN: { width: 64, height: 64 },
   ATTACK: { width: 137, height: 96 },
   HURT: { width: 96, height: 96 },
+};
+
+const SPRITE_SHEETS = {
+  IDLE: idleSprite,
+  RUN: runSprite,
+  ATTACK: attackSprite,
+  HURT: hurtSprite,
 };
 
 export default function SpriteAnimation({ 
@@ -54,12 +65,7 @@ export default function SpriteAnimation({
   }, [state, frames, onAnimationComplete]);
 
   const getSpriteSheet = () => {
-    switch (state) {
-      case 'IDLE': return '/attached_assets/IDLE_1760629410247.png';
-      case 'RUN': return '/attached_assets/RUN_1760629410248.png';
-      case 'ATTACK': return '/attached_assets/ATTACK 1_1760629410245.png';
-      case 'HURT': return '/attached_assets/HURT_1760629410246.png';
-    }
+    return SPRITE_SHEETS[state];
   };
 
   return (
