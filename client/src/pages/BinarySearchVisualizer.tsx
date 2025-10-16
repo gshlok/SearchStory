@@ -2,10 +2,21 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import SpriteAnimation, { SpriteState } from '@/components/SpriteAnimation';
 import ArrayElement from '@/components/ArrayElement';
 import { Play, RotateCcw, Sparkles } from 'lucide-react';
+import layer0 from '@assets/Layer_0000_9_1760630184411.png';
+import layer1 from '@assets/Layer_0001_8_1760630184412.png';
+import layer2 from '@assets/Layer_0002_7_1760630184412.png';
+import layer3 from '@assets/Layer_0003_6_1760630184413.png';
+import layer4 from '@assets/Layer_0004_Lights_1760630184413.png';
+import layer5 from '@assets/Layer_0005_5_1760630184414.png';
+import layer6 from '@assets/Layer_0006_4_1760630184415.png';
+import layer7 from '@assets/Layer_0007_Lights_1760630184415.png';
+import layer8 from '@assets/Layer_0008_3_1760630184416.png';
+import layer9 from '@assets/Layer_0009_2_1760630184417.png';
+import layer10 from '@assets/Layer_0010_1_1760630184418.png';
+import layer11 from '@assets/Layer_0011_0_1760630184418.png';
 
 export default function BinarySearchVisualizer() {
   const [array, setArray] = useState<number[]>([3, 7, 12, 18, 25, 31, 42, 56, 67, 73]);
@@ -132,23 +143,40 @@ export default function BinarySearchVisualizer() {
   };
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-display font-bold text-foreground mb-4" data-testid="text-title">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Layered Background */}
+      <div className="absolute inset-0 z-0">
+        <img src={layer11} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer10} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer9} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer8} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer7} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer6} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer5} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer4} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer3} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer2} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer1} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={layer0} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex flex-col px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl md:text-6xl font-display font-bold text-white mb-4 drop-shadow-lg" data-testid="text-title">
             Binary Search Adventure
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow">
             Watch the sprite hero search through a sorted array using the binary search algorithm
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          <Card className="lg:col-span-2 p-8">
-            <div className="relative min-h-[400px]">
+        <div className="flex-1 flex items-center justify-center mb-8">
+          <div className="w-full max-w-6xl">
+            <div className="relative min-h-[500px]">
               <div 
                 ref={arrayRef}
-                className="flex gap-3 justify-center mb-20 flex-wrap"
+                className="flex gap-3 justify-center mb-32 flex-wrap"
               >
                 {array.map((value, index) => (
                   <ArrayElement
@@ -165,45 +193,44 @@ export default function BinarySearchVisualizer() {
               <SpriteAnimation
                 state={spriteState}
                 position={spritePosition}
-                scale={1.5}
+                scale={3}
               />
-
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-border rounded-full" />
             </div>
-          </Card>
+          </div>
+        </div>
 
-          <div className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4 text-card-foreground">Search Controls</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">Target Number</label>
-                  <Input
-                    type="number"
-                    value={target}
-                    onChange={(e) => setTarget(e.target.value)}
-                    disabled={searchState === 'searching'}
-                    className="font-mono"
-                    data-testid="input-target"
-                  />
-                </div>
-
-                <Button
-                  onClick={startSearch}
+        <div className="flex justify-center">
+          <Card className="p-6 w-full max-w-md bg-card/90 backdrop-blur-sm">
+            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Search Controls</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">Target Number</label>
+                <Input
+                  type="number"
+                  value={target}
+                  onChange={(e) => setTarget(e.target.value)}
                   disabled={searchState === 'searching'}
-                  className="w-full"
-                  data-testid="button-search"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Start Search
-                </Button>
+                  className="font-mono"
+                  data-testid="input-target"
+                />
+              </div>
 
+              <Button
+                onClick={startSearch}
+                disabled={searchState === 'searching'}
+                className="w-full"
+                data-testid="button-search"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Start Search
+              </Button>
+
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={generateNewArray}
                   disabled={searchState === 'searching'}
                   variant="outline"
-                  className="w-full"
                   data-testid="button-new-array"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
@@ -214,67 +241,14 @@ export default function BinarySearchVisualizer() {
                   onClick={resetSearch}
                   disabled={searchState === 'searching'}
                   variant="outline"
-                  className="w-full"
                   data-testid="button-reset"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Reset
                 </Button>
               </div>
-            </Card>
-
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4 text-card-foreground">Algorithm Stats</h3>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Status</span>
-                  <Badge variant={
-                    searchState === 'found' ? 'default' : 
-                    searchState === 'searching' ? 'secondary' :
-                    searchState === 'notfound' ? 'destructive' : 'outline'
-                  } data-testid="badge-status">
-                    {searchState === 'idle' && 'Ready'}
-                    {searchState === 'searching' && 'Searching...'}
-                    {searchState === 'found' && 'Found!'}
-                    {searchState === 'notfound' && 'Not Found'}
-                  </Badge>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Steps</span>
-                  <Badge variant="outline" data-testid="badge-steps">
-                    {stepCount}
-                  </Badge>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Array Size</span>
-                  <Badge variant="outline" data-testid="badge-size">
-                    {array.length}
-                  </Badge>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Complexity</span>
-                  <Badge variant="outline" className="font-mono" data-testid="badge-complexity">
-                    O(log n)
-                  </Badge>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-primary/5 border-primary/20">
-              <h3 className="text-lg font-semibold mb-3 text-foreground">How It Works</h3>
-              <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• Sprite moves to the middle element</li>
-                <li>• Compares value with target</li>
-                <li>• Eliminates half of the array</li>
-                <li>• Repeats until target is found</li>
-                <li>• Much faster than linear search!</li>
-              </ul>
-            </Card>
-          </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
