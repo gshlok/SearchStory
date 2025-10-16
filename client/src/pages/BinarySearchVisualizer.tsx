@@ -27,6 +27,7 @@ export default function BinarySearchVisualizer() {
   const [spriteState, setSpriteState] = useState<SpriteState>('IDLE');
   const [spritePosition, setSpritePosition] = useState({ x: 50, y: 300 });
   const [stepCount, setStepCount] = useState(0);
+  const [searchBoundaries, setSearchBoundaries] = useState<{ left: number; right: number } | null>(null);
   const arrayRef = useRef<HTMLDivElement>(null);
 
   const generateNewArray = () => {
@@ -51,6 +52,7 @@ export default function BinarySearchVisualizer() {
     setSpriteState('IDLE');
     setSpritePosition({ x: 50, y: 300 });
     setStepCount(0);
+    setSearchBoundaries(null);
   };
 
   const getElementPosition = (index: number) => {
@@ -74,74 +76,77 @@ export default function BinarySearchVisualizer() {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const startSearch = async () => {
+  const startSearch = () => {
     const targetNum = parseInt(target);
     if (isNaN(targetNum)) return;
 
     setSearchState('searching');
     setStepCount(0);
     setEliminatedIndices(new Set());
-    
-    let left = 0;
-    let right = array.length - 1;
-    let steps = 0;
-    let eliminated = new Set<number>();
+    setSearchBoundaries({ left: 0, right: array.length - 1 });
+    setSpriteState('IDLE');
+    setSpritePosition({ x: 50, y: 300 });
+  };
 
-    while (left <= right) {
-      steps++;
-      setStepCount(steps);
-      
-      const mid = Math.floor((left + right) / 2);
-      
-      setSpriteState('RUN');
-      const midPosition = getElementPosition(mid);
-      setSpritePosition(midPosition);
-      
-      await sleep(1200);
-      
-      setSpriteState('IDLE');
-      setCurrentIndex(mid);
-      
-      await sleep(1200);
+  const nextStep = async () => {
+    if (!searchBoundaries) return;
+    const targetNum = parseInt(target);
+    const { left, right } = searchBoundaries;
 
-      if (array[mid] === targetNum) {
-        setSpriteState('ATTACK');
-        setSearchState('found');
-        await sleep(1500);
-        setSpriteState('IDLE');
-        return;
-      }
-
+    if (left > right) {
+      setSearchState('notfound');
       setSpriteState('HURT');
-      await sleep(800);
-      
-      if (array[mid] < targetNum) {
-        for (let i = left; i <= mid; i++) {
-          eliminated.add(i);
-        }
-        left = mid + 1;
-      } else {
-        for (let i = mid; i <= right; i++) {
-          eliminated.add(i);
-        }
-        right = mid - 1;
-      }
-      
-      setEliminatedIndices(new Set(eliminated));
-      setCurrentIndex(null);
-      
-      await sleep(800);
-      
-      setSpriteState('RUN');
-      setSpritePosition({ x: 50, y: spritePosition.y });
-      await sleep(1000);
+      await sleep(1200);
       setSpriteState('IDLE');
-      await sleep(400);
+      setSearchBoundaries(null);
+      return;
     }
 
-    setSearchState('notfound');
-    setSpriteState('HURT');
+    const mid = Math.floor((left + right) / 2);
+    setStepCount(prev => prev + 1);
+
+    // Move sprite to the current element
+    setSpriteState('RUN');
+    const midPosition = getElementPosition(mid);
+    setSpritePosition(midPosition);
     await sleep(1200);
+
+    setSpriteState('IDLE');
+    setCurrentIndex(mid);
+    await sleep(1200);
+
+    if (array[mid] === targetNum) {
+      setSpriteState('ATTACK');
+      setSearchState('found');
+      await sleep(1500);
+      setSpriteState('IDLE');
+      setSearchBoundaries(null);
+      return;
+    }
+
+    setSpriteState('HURT');
+    await sleep(800);
+
+    const eliminated = new Set(eliminatedIndices);
+    if (array[mid] < targetNum) {
+      for (let i = left; i <= mid; i++) {
+        eliminated.add(i);
+      }
+      setSearchBoundaries({ left: mid + 1, right });
+    } else {
+      for (let i = mid; i <= right; i++) {
+        eliminated.add(i);
+      }
+      setSearchBoundaries({ left, right: mid - 1 });
+    }
+
+    setEliminatedIndices(eliminated);
+    setCurrentIndex(null);
+    await sleep(800);
+
+    setSpriteState('RUN');
+    setSpritePosition({ x: 50, y: spritePosition.y });
+    await sleep(1000);
     setSpriteState('IDLE');
   };
 
@@ -220,15 +225,27 @@ export default function BinarySearchVisualizer() {
                   />
                 </div>
 
-                <Button
-                  onClick={startSearch}
-                  disabled={searchState === 'searching'}
-                  className="w-full"
-                  data-testid="button-search"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Start Search
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={startSearch}
+                    disabled={searchState === 'searching'}
+                    className="w-full"
+                    data-testid="button-search"
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Start Search
+                  </Button>
+
+                  <Button
+                    onClick={nextStep}
+                    disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound'}
+                    className="w-full"
+                    variant="secondary"
+                    data-testid="button-next-step"
+                  >
+                    Next Step
+                  </Button>
+                </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <Button
