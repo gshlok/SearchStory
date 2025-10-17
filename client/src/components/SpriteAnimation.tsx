@@ -4,7 +4,7 @@ import runSprite from '@assets/RUN_1760629410248.png';
 import attackSprite from '@assets/ATTACK 1_1760629410245.png';
 import thinkingSprite from '@assets/RUN_1760629410248.png'; // Using run as thinking for now
 
-export type SpriteState = 'IDLE' | 'RUN' | 'ATTACK' | 'THINKING';
+export type SpriteState = 'IDLE' | 'ATTACK' | 'THINKING';
 
 interface SpriteAnimationProps {
   state: SpriteState;
@@ -15,23 +15,20 @@ interface SpriteAnimationProps {
 
 const SPRITE_FRAMES = {
   IDLE: 10,
-  RUN: 16,
   ATTACK: 7,
   THINKING: 16, // Using same as RUN for now
 };
 
 const SPRITE_DIMENSIONS = {
   IDLE: { width: 96, height: 96 },
-  RUN: { width: 64, height: 64 },
   ATTACK: { width: 137, height: 96 },
-  THINKING: { width: 64, height: 64 }, // Using same as RUN for now
+  THINKING: { width: 96, height: 96 }, // Use same size as IDLE for consistency
 };
 
 const SPRITE_SHEETS = {
   IDLE: idleSprite,
-  RUN: runSprite,
   ATTACK: attackSprite,
-  THINKING: thinkingSprite,
+  THINKING: idleSprite, // Use idle sprite for thinking to maintain size consistency
 };
 
 export default function SpriteAnimation({ 

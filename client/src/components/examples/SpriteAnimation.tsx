@@ -22,9 +22,6 @@ export default function SpriteAnimationExample() {
         <Button onClick={() => setState('IDLE')} variant={state === 'IDLE' ? 'default' : 'outline'} size="sm" data-testid="button-idle">
           Idle
         </Button>
-        <Button onClick={() => setState('RUN')} variant={state === 'RUN' ? 'default' : 'outline'} size="sm" data-testid="button-run">
-          Run
-        </Button>
         <Button onClick={() => setState('ATTACK')} variant={state === 'ATTACK' ? 'default' : 'outline'} size="sm" data-testid="button-attack">
           Attack
         </Button>

@@ -25,9 +25,11 @@ export default function BinarySearchVisualizer() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [eliminatedIndices, setEliminatedIndices] = useState<Set<number>>(new Set());
   const [spriteState, setSpriteState] = useState<SpriteState>('IDLE');
-  const [spritePosition, setSpritePosition] = useState({ x: 50, y: 300 });
+  const [spritePosition, setSpritePosition] = useState({ x: 100, y: 450 }); // Adjusted sprite position
   const [stepCount, setStepCount] = useState(0);
   const [searchBoundaries, setSearchBoundaries] = useState<{ left: number; right: number } | null>(null);
+  const [arrayOffset, setArrayOffset] = useState(200); // Dynamic offset for array positioning
+  const [showSlashEffect, setShowSlashEffect] = useState(false); // Visual slash effect
   const arrayRef = useRef<HTMLDivElement>(null);
 
   const generateNewArray = () => {
@@ -50,9 +52,11 @@ export default function BinarySearchVisualizer() {
     setCurrentIndex(null);
     setEliminatedIndices(new Set());
     setSpriteState('IDLE');
-    setSpritePosition({ x: 50, y: 300 });
+    setSpritePosition({ x: 100, y: 450 }); // Keep sprite in adjusted position
     setStepCount(0);
     setSearchBoundaries(null);
+    setArrayOffset(200); // Reset array offset
+    setShowSlashEffect(false); // Reset slash effect
   };
 
   const getElementPosition = (index: number) => {
@@ -85,7 +89,7 @@ export default function BinarySearchVisualizer() {
     setEliminatedIndices(new Set());
     setSearchBoundaries({ left: 0, right: array.length - 1 });
     setSpriteState('IDLE');
-    setSpritePosition({ x: 50, y: 300 });
+    setSpritePosition({ x: 100, y: 450 }); // Keep sprite in adjusted position
   };
 
   const nextStep = async () => {
@@ -105,13 +109,7 @@ export default function BinarySearchVisualizer() {
     const mid = Math.floor((left + right) / 2);
     setStepCount(prev => prev + 1);
 
-    // Move sprite to the current element
-    setSpriteState('RUN');
-    const midPosition = getElementPosition(mid);
-    setSpritePosition(midPosition);
-    await sleep(1200);
-
-    setSpriteState('IDLE');
+    // Set current index without moving sprite
     setCurrentIndex(mid);
     await sleep(1200);
 
@@ -126,33 +124,38 @@ export default function BinarySearchVisualizer() {
 
     // Attack animation when eliminating half the array
     setSpriteState('ATTACK');
+    setShowSlashEffect(true); // Show slash effect
     await sleep(800);
 
     const eliminated = new Set(eliminatedIndices);
+    let newOffset = arrayOffset;
+    
     if (array[mid] < targetNum) {
+      // Eliminate left half, move array right
       for (let i = left; i <= mid; i++) {
         eliminated.add(i);
       }
       setSearchBoundaries({ left: mid + 1, right });
+      newOffset = arrayOffset + 50; // Move array further right
     } else {
+      // Eliminate right half, move array left
       for (let i = mid; i <= right; i++) {
         eliminated.add(i);
       }
       setSearchBoundaries({ left, right: mid - 1 });
+      newOffset = arrayOffset - 50; // Move array further left
     }
 
     setEliminatedIndices(eliminated);
+    setArrayOffset(newOffset);
     setCurrentIndex(null);
     await sleep(800);
-
-    setSpriteState('RUN');
-    setSpritePosition({ x: 50, y: spritePosition.y });
-    await sleep(1000);
     setSpriteState('IDLE');
+    setShowSlashEffect(false); // Hide slash effect
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="h-screen relative overflow-hidden">
       {/* Layered Background */}
       <div className="absolute inset-0 z-0">
         <img src={layer11} alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -170,23 +173,24 @@ export default function BinarySearchVisualizer() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <div className="text-center py-8 px-4">
-          <h1 className="text-5xl md:text-6xl font-display font-bold text-white mb-4 drop-shadow-lg" data-testid="text-title">
+      <div className="relative z-10 h-screen flex flex-col">
+        <div className="text-center py-4 px-4">
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-2 drop-shadow-lg" data-testid="text-title">
             Binary Search Adventure
           </h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow">
+          <p className="text-sm text-white/90 max-w-2xl mx-auto drop-shadow">
             Watch the sprite hero search through a sorted array using the binary search algorithm
           </p>
         </div>
 
         <div className="flex-1 flex">
-          <div className="flex-1 flex flex-col justify-end pb-12 px-4">
-            <div className="w-full">
-              <div className="relative min-h-[400px] flex flex-col justify-end">
+          <div className="flex-1 flex flex-col justify-end pb-6 px-4">
+            <div className="w-full max-w-2xl">
+              <div className="relative h-80 flex flex-col justify-end items-center">
                 <div 
                   ref={arrayRef}
-                  className="flex gap-3 justify-center flex-wrap mb-4"
+                  className="flex flex-col gap-2 justify-center items-center mb-4 transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(${arrayOffset}px)` }}
                 >
                   {array.map((value, index) => (
                     <ArrayElement
@@ -203,44 +207,60 @@ export default function BinarySearchVisualizer() {
                 <SpriteAnimation
                   state={spriteState}
                   position={spritePosition}
-                  scale={5}
+                  scale={7}
                 />
+
+                {/* Slash Effect */}
+                {showSlashEffect && (
+                  <div 
+                    className="absolute pointer-events-none"
+                    style={{
+                      left: `${spritePosition.x + 200}px`,
+                      top: `${spritePosition.y - 200}px`,
+                      width: '300px',
+                      height: '400px',
+                      background: 'linear-gradient(45deg, transparent 40%, rgba(255, 0, 0, 0.3) 50%, transparent 60%)',
+                      transform: 'rotate(-15deg)',
+                      animation: 'slashEffect 0.8s ease-out',
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
 
-          <div className="w-80 p-6 flex items-end pb-12">
-            <Card className="p-6 w-full bg-card/90 backdrop-blur-sm">
-              <h3 className="text-lg font-semibold mb-4 text-card-foreground">Search Controls</h3>
+          <div className="w-96 p-6 flex items-end pb-6">
+            <Card className="p-8 w-full bg-card/90 backdrop-blur-sm">
+              <h3 className="text-xl font-semibold mb-6 text-card-foreground">Search Controls</h3>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">Target Number</label>
+                  <label className="text-base text-muted-foreground mb-3 block">Target Number</label>
                   <Input
                     type="number"
                     value={target}
                     onChange={(e) => setTarget(e.target.value)}
                     disabled={searchState === 'searching'}
-                    className="font-mono"
+                    className="font-mono h-12 text-lg"
                     data-testid="input-target"
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Button
                     onClick={startSearch}
                     disabled={searchState === 'searching'}
-                    className="w-full"
+                    className="w-full h-12 text-lg"
                     data-testid="button-search"
                   >
-                    <Play className="w-4 h-4 mr-2" />
+                    <Play className="w-5 h-5 mr-2" />
                     Start Search
                   </Button>
 
                   <Button
                     onClick={nextStep}
                     disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound'}
-                    className="w-full"
+                    className="w-full h-12 text-lg"
                     variant="secondary"
                     data-testid="button-next-step"
                   >
@@ -248,14 +268,15 @@ export default function BinarySearchVisualizer() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-3">
                   <Button
                     onClick={generateNewArray}
                     disabled={searchState === 'searching'}
                     variant="outline"
+                    className="h-12"
                     data-testid="button-new-array"
                   >
-                    <Sparkles className="w-4 h-4 mr-2" />
+                    <Sparkles className="w-5 h-5 mr-2" />
                     New Array
                   </Button>
 
@@ -263,9 +284,10 @@ export default function BinarySearchVisualizer() {
                     onClick={resetSearch}
                     disabled={searchState === 'searching'}
                     variant="outline"
+                    className="h-12"
                     data-testid="button-reset"
                   >
-                    <RotateCcw className="w-4 h-4 mr-2" />
+                    <RotateCcw className="w-5 h-5 mr-2" />
                     Reset
                   </Button>
                 </div>

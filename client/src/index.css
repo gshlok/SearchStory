@@ -353,3 +353,19 @@
     inset: -1px;
   }
 }
+
+/* Slash Effect Animation */
+@keyframes slashEffect {
+  0% {
+    opacity: 0;
+    transform: rotate(-15deg) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(-15deg) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-15deg) scale(1);
+  }
+}
