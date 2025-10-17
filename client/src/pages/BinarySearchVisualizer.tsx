@@ -175,11 +175,11 @@ export default function BinarySearchVisualizer() {
       {/* Content */}
       <div className="relative z-10 h-screen flex flex-col">
         <div className="text-center py-4 px-4">
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-2 drop-shadow-lg" data-testid="text-title">
-            Binary Search Adventure
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 drop-shadow-lg tracking-wide" data-testid="text-title" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(255,215,0,0.3)' }}>
+            The Samurai's Quest
           </h1>
-          <p className="text-sm text-white/90 max-w-2xl mx-auto drop-shadow">
-            Watch the sprite hero search through a sorted array using the binary search algorithm
+          <p className="text-sm text-white/90 max-w-2xl mx-auto drop-shadow font-serif" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
+            Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique
           </p>
         </div>
 
@@ -230,19 +230,20 @@ export default function BinarySearchVisualizer() {
           </div>
 
           <div className="w-96 p-6 flex items-end pb-6">
-            <Card className="p-8 w-full bg-card/90 backdrop-blur-sm">
-              <h3 className="text-xl font-semibold mb-6 text-card-foreground">Search Controls</h3>
+            <Card className="p-8 w-full bg-gradient-to-br from-amber-900/90 to-red-900/90 backdrop-blur-sm border-2 border-amber-600/50 shadow-2xl" style={{ boxShadow: '0 0 30px rgba(255,215,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
+              <h3 className="text-xl font-bold mb-6 text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Sacred Scrolls</h3>
               
               <div className="space-y-6">
                 <div>
-                  <label className="text-base text-muted-foreground mb-3 block">Target Number</label>
+                  <label className="text-base text-amber-200 mb-3 block font-serif font-semibold" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Seek the Sacred Number</label>
                   <Input
                     type="number"
                     value={target}
                     onChange={(e) => setTarget(e.target.value)}
                     disabled={searchState === 'searching'}
-                    className="font-mono h-12 text-lg"
+                    className="font-mono h-12 text-lg bg-amber-800/50 border-amber-600/70 text-amber-100 placeholder:text-amber-300 focus:border-amber-400 focus:ring-amber-400/50"
                     data-testid="input-target"
+                    placeholder="Enter the sacred number..."
                   />
                 </div>
 
@@ -250,20 +251,23 @@ export default function BinarySearchVisualizer() {
                   <Button
                     onClick={startSearch}
                     disabled={searchState === 'searching'}
-                    className="w-full h-12 text-lg"
+                    className="w-full h-12 text-lg bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 border-2 border-red-500/50 text-red-100 font-serif font-bold shadow-lg hover:shadow-red-500/25 transition-all duration-300"
                     data-testid="button-search"
+                    style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                   >
                     <Play className="w-5 h-5 mr-2" />
-                    Start Search
+                    Begin the Quest
                   </Button>
 
                   <Button
                     onClick={nextStep}
                     disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound'}
-                    className="w-full h-12 text-lg"
+                    className="w-full h-12 text-lg bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
                     variant="secondary"
                     data-testid="button-next-step"
+                    style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                   >
+                    <Sparkles className="w-5 h-5 mr-2" />
                     Next Step
                   </Button>
                 </div>
@@ -273,22 +277,24 @@ export default function BinarySearchVisualizer() {
                     onClick={generateNewArray}
                     disabled={searchState === 'searching'}
                     variant="outline"
-                    className="h-12"
+                    className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
                     data-testid="button-new-array"
+                    style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                   >
                     <Sparkles className="w-5 h-5 mr-2" />
-                    New Array
+                    New Scrolls
                   </Button>
 
                   <Button
                     onClick={resetSearch}
                     disabled={searchState === 'searching'}
                     variant="outline"
-                    className="h-12"
+                    className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
                     data-testid="button-reset"
+                    style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                   >
                     <RotateCcw className="w-5 h-5 mr-2" />
-                    Reset
+                    Reset Quest
                   </Button>
                 </div>
               </div>
