@@ -67,7 +67,7 @@ export default function BinarySearchVisualizer() {
       
       return {
         x: elementRect.left - containerRect.left + elementRect.width / 2,
-        y: elementRect.top - containerRect.top + elementRect.height,
+        y: 300, // Keep sprite at the same vertical level
       };
     }
     
@@ -95,7 +95,7 @@ export default function BinarySearchVisualizer() {
 
     if (left > right) {
       setSearchState('notfound');
-      setSpriteState('HURT');
+      setSpriteState('THINKING');
       await sleep(1200);
       setSpriteState('IDLE');
       setSearchBoundaries(null);
@@ -116,7 +116,7 @@ export default function BinarySearchVisualizer() {
     await sleep(1200);
 
     if (array[mid] === targetNum) {
-      setSpriteState('ATTACK');
+      setSpriteState('THINKING');
       setSearchState('found');
       await sleep(1500);
       setSpriteState('IDLE');
@@ -124,7 +124,8 @@ export default function BinarySearchVisualizer() {
       return;
     }
 
-    setSpriteState('HURT');
+    // Attack animation when eliminating half the array
+    setSpriteState('ATTACK');
     await sleep(800);
 
     const eliminated = new Set(eliminatedIndices);

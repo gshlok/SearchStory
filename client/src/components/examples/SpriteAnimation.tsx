@@ -12,7 +12,7 @@ export default function SpriteAnimationExample() {
         position={{ x: 200, y: 200 }} 
         scale={1.5}
         onAnimationComplete={() => {
-          if (state === 'ATTACK' || state === 'HURT') {
+          if (state === 'ATTACK' || state === 'THINKING') {
             setState('IDLE');
           }
         }}
@@ -28,8 +28,8 @@ export default function SpriteAnimationExample() {
         <Button onClick={() => setState('ATTACK')} variant={state === 'ATTACK' ? 'default' : 'outline'} size="sm" data-testid="button-attack">
           Attack
         </Button>
-        <Button onClick={() => setState('HURT')} variant={state === 'HURT' ? 'default' : 'outline'} size="sm" data-testid="button-hurt">
-          Hurt
+        <Button onClick={() => setState('THINKING')} variant={state === 'THINKING' ? 'default' : 'outline'} size="sm" data-testid="button-thinking">
+          Thinking
         </Button>
       </div>
     </div>

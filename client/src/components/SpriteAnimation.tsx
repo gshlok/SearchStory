@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import idleSprite from '@assets/IDLE_1760629410247.png';
 import runSprite from '@assets/RUN_1760629410248.png';
 import attackSprite from '@assets/ATTACK 1_1760629410245.png';
-import hurtSprite from '@assets/HURT_1760629410246.png';
+import thinkingSprite from '@assets/RUN_1760629410248.png'; // Using run as thinking for now
 
-export type SpriteState = 'IDLE' | 'RUN' | 'ATTACK' | 'HURT';
+export type SpriteState = 'IDLE' | 'RUN' | 'ATTACK' | 'THINKING';
 
 interface SpriteAnimationProps {
   state: SpriteState;
@@ -17,21 +17,21 @@ const SPRITE_FRAMES = {
   IDLE: 10,
   RUN: 16,
   ATTACK: 7,
-  HURT: 4,
+  THINKING: 16, // Using same as RUN for now
 };
 
 const SPRITE_DIMENSIONS = {
   IDLE: { width: 96, height: 96 },
   RUN: { width: 64, height: 64 },
   ATTACK: { width: 137, height: 96 },
-  HURT: { width: 96, height: 96 },
+  THINKING: { width: 64, height: 64 }, // Using same as RUN for now
 };
 
 const SPRITE_SHEETS = {
   IDLE: idleSprite,
   RUN: runSprite,
   ATTACK: attackSprite,
-  HURT: hurtSprite,
+  THINKING: thinkingSprite,
 };
 
 export default function SpriteAnimation({ 
@@ -47,12 +47,12 @@ export default function SpriteAnimation({
   useEffect(() => {
     setCurrentFrame(0);
     
-    const frameDelay = state === 'ATTACK' || state === 'HURT' ? 80 : 100;
+    const frameDelay = state === 'ATTACK' || state === 'THINKING' ? 80 : 100;
     const interval = setInterval(() => {
       setCurrentFrame(prev => {
         const nextFrame = prev + 1;
         if (nextFrame >= frames) {
-          if (state === 'ATTACK' || state === 'HURT') {
+          if (state === 'ATTACK' || state === 'THINKING') {
             onAnimationComplete?.();
           }
           return 0;
