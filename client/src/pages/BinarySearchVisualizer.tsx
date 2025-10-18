@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from '@/components/ui/alert-dialog';
 import SpriteAnimation, { SpriteState } from '@/components/SpriteAnimation';
 import ArrayElement from '@/components/ArrayElement';
+import RainEffect from '@/components/RainEffect';
 import { Play, RotateCcw, Sparkles, ArrowUp } from 'lucide-react';
 import layer0 from '@assets/Layer_0000_9_1760630184411.png';
 import layer1 from '@assets/Layer_0001_8_1760630184412.png';
@@ -34,8 +35,8 @@ export default function BinarySearchVisualizer() {
   const [arrayOffset, setArrayOffset] = useState(200); // Dynamic offset for array positioning
   const [showSlashEffect, setShowSlashEffect] = useState(false); // Visual slash effect
   const [isSorting, setIsSorting] = useState(false); // New state for sorting
-  const [sortingStep, setSortingStep] = useState<{i: number, j: number} | null>(null); // Track current sorting positions
-  const [swappingElements, setSwappingElements] = useState<{index: number, direction: 'left' | 'right'} | null>(null); // Track swapping elements
+  const [sortingStep, setSortingStep] = useState<{ i: number, j: number } | null>(null); // Track current sorting positions
+  const [swappingElements, setSwappingElements] = useState<{ index: number, direction: 'left' | 'right' } | null>(null); // Track swapping elements
   const [isReady, setIsReady] = useState(false); // New state to control visibility
   const [showContent, setShowContent] = useState(false); // New state for fade-in animation
   const [editingIndex, setEditingIndex] = useState<number | null>(null); // New state for tracking which element is being edited
@@ -191,53 +192,53 @@ export default function BinarySearchVisualizer() {
   // New bubble sort function with animations
   const bubbleSort = async () => {
     if (isSorting) return;
-    
+
     setIsSorting(true);
     setSearchState('searching'); // Disable other controls during sorting
     let newArray = [...array];
     const n = newArray.length;
-    
+
     for (let i = 0; i < n - 1; i++) {
       for (let j = 0; j < n - i - 1; j++) {
         // Highlight elements being compared
-        setSortingStep({i: j, j: j+1});
+        setSortingStep({ i: j, j: j + 1 });
         setCurrentIndex(j);
-        setSecondIndex(j+1);
+        setSecondIndex(j + 1);
         setSpriteState('IDLE'); // Use idle animation instead of attack
-        
+
         // Keep sprite in fixed position during sorting
         // Removed the sprite position update that was causing the shift
-        
+
         await sleep(300); // Increased speed (was 600)
-        
+
         if (newArray[j] > newArray[j + 1]) {
           // Animate the swap with visual trail
-          setSwappingElements({index: j, direction: 'left'});
-          setSwappingElements({index: j+1, direction: 'right'});
-          
+          setSwappingElements({ index: j, direction: 'left' });
+          setSwappingElements({ index: j + 1, direction: 'right' });
+
           // Wait for animation
           await sleep(200);
-          
+
           // Actually swap the elements
           const temp = newArray[j];
           newArray = [...newArray];
           newArray[j] = newArray[j + 1];
           newArray[j + 1] = temp;
           setArray(newArray);
-          
+
           // Reset swapping state
           setSwappingElements(null);
-          
+
           // Visual feedback for swap
           await sleep(100); // Shorter delay for faster animation
         }
-        
+
         // Reset highlights
         setCurrentIndex(null);
         setSecondIndex(null);
       }
     }
-    
+
     // Sorting complete
     setSpriteState('THINKING');
     await sleep(500); // Shorter completion delay
@@ -262,7 +263,7 @@ export default function BinarySearchVisualizer() {
     newArray[index] = newValue;
     setArray(newArray);
     setEditingIndex(null);
-    
+
     // If the target was this element, update the target as well
     if (target === array[index].toString()) {
       setTarget(newValue.toString());
@@ -388,6 +389,7 @@ export default function BinarySearchVisualizer() {
         <img src={layer2} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <img src={layer1} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <img src={layer0} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <RainEffect />
       </div>
 
       {/* Content */}
@@ -502,7 +504,7 @@ export default function BinarySearchVisualizer() {
                       <Sparkles className="w-5 h-5 mr-2" />
                       Next Step
                     </Button>
-                    
+
                     {/* New Sort Array Button */}
                     <Button
                       onClick={bubbleSort}
@@ -575,7 +577,7 @@ export default function BinarySearchVisualizer() {
             An unsorted array is like wild bamboo; no clean cut can be made there. The blade of binary search cuts only through order.
           </AlertDialogDescription>
           <AlertDialogFooter>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={() => setShowUnsortedDialog(false)}
               className="bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300 w-full py-3"
               style={{ fontFamily: 'Merriweather, serif' }}
