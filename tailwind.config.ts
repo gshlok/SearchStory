@@ -97,10 +97,60 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "windBlownFadeOut": {
+          "0%": {
+            opacity: "1",
+            transform: "translateX(0) translateY(0) rotate(0deg)",
+          },
+          "20%": {
+            opacity: "0.8",
+            transform: "translateX(10px) translateY(-5px) rotate(5deg)",
+          },
+          "40%": {
+            opacity: "0.6",
+            transform: "translateX(20px) translateY(-10px) rotate(10deg)",
+          },
+          "60%": {
+            opacity: "0.4",
+            transform: "translateX(40px) translateY(-20px) rotate(15deg)",
+          },
+          "80%": {
+            opacity: "0.2",
+            transform: "translateX(80px) translateY(-40px) rotate(20deg)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "translateX(150px) translateY(-80px) rotate(30deg)",
+          },
+        },
+        "windBlownCharFadeOut": {
+          "0%": {
+            opacity: "1",
+            transform: "translateX(0) translateY(0) rotate(0deg)",
+          },
+          "25%": {
+            opacity: "0.8",
+            transform: "translateX(5px) translateY(-2px) rotate(2deg)",
+          },
+          "50%": {
+            opacity: "0.6",
+            transform: "translateX(15px) translateY(-5px) rotate(5deg)",
+          },
+          "75%": {
+            opacity: "0.3",
+            transform: "translateX(30px) translateY(-15px) rotate(10deg)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "translateX(60px) translateY(-30px) rotate(20deg)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "windBlownFadeOut": "windBlownFadeOut 1s ease-out forwards",
+        "windBlownCharFadeOut": "windBlownCharFadeOut 0.3s ease-out forwards", // Reasonable speed
       },
     },
   },

@@ -7,6 +7,8 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import SpriteAnimation, { SpriteState } from '@/components/SpriteAnimation';
 import ArrayElement from '@/components/ArrayElement';
 import RainEffect from '@/components/RainEffect';
+import WindBlownText from '@/components/WindBlownText';
+import { useTypewriter } from '@/hooks/useTypewriter';
 import { Play, RotateCcw, Sparkles, ArrowUp } from 'lucide-react';
 import layer0 from '@assets/Layer_0000_9_1760630184411.png';
 import layer1 from '@assets/Layer_0001_8_1760630184412.png';
@@ -40,12 +42,20 @@ export default function BinarySearchVisualizer() {
   const [isReady, setIsReady] = useState(false); // New state to control visibility
   const [showContent, setShowContent] = useState(false); // New state for fade-in animation
   const [editingIndex, setEditingIndex] = useState<number | null>(null); // New state for tracking which element is being edited
+  const [fadeOutText, setFadeOutText] = useState(false); // New state for text fade-out animation
   const arrayRef = useRef<HTMLDivElement>(null);
   const [isProblemOpen, setIsProblemOpen] = useState(false);
   const [problemText, setProblemText] = useState<string>("");
   const [problemTitle, setProblemTitle] = useState<string>("Samurai and the Hidden Plank");
   const [problemBody, setProblemBody] = useState<string>("");
   const [showUnsortedDialog, setShowUnsortedDialog] = useState(false);
+
+  // Initialize typewriter effect for the descriptive text
+  const { displayText } = useTypewriter({
+    text: "Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique",
+    speed: 30,
+    delay: 500
+  });
 
   // Handle fade-in animation when content becomes visible
   useEffect(() => {
@@ -398,9 +408,26 @@ export default function BinarySearchVisualizer() {
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 drop-shadow-lg tracking-wide" data-testid="text-title" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(255,215,0,0.3)' }}>
             The Samurai's Quest
           </h1>
-          <p className="text-sm text-white/90 max-w-2xl mx-auto drop-shadow font-serif" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
-            Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique
-          </p>
+          <div 
+            className="text-2xl md:text-3xl text-white/90 max-w-3xl mx-auto drop-shadow font-serif py-2"
+            style={{ 
+              fontFamily: 'Merriweather, serif', 
+              textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+            }}
+          >
+            {fadeOutText ? (
+              <WindBlownText 
+                text="Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique" 
+                isActive={fadeOutText}
+                onCompletion={() => setIsReady(true)}
+              />
+            ) : (
+              <>
+                {displayText}
+                <span className="ml-1 animate-pulse">|</span>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Sprite - always visible */}
@@ -553,7 +580,13 @@ export default function BinarySearchVisualizer() {
             <div className="w-96 p-6 flex items-end pb-6">
               <div className="w-full flex flex-col items-center">
                 <Button
-                  onClick={() => setIsReady(true)}
+                  onClick={() => {
+                    setFadeOutText(true);
+                    // Set a timeout to ensure content appears even if animation fails
+                    setTimeout(() => {
+                      setIsReady(true);
+                    }, 1000); // Reduced timeout to 1 second
+                  }}
                   className="h-16 px-8 text-2xl bg-gradient-to-r from-amber-700 to-red-800 hover:from-amber-600 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
                   style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                 >
