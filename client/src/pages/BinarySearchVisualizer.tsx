@@ -81,13 +81,13 @@ export default function BinarySearchVisualizer() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set initial volume to 30% to reduce loudness
-    audio.volume = 0.3;
+    // Set initial volume to 10% to reduce loudness even more
+    audio.volume = 0.1;
 
     const playMusic = async () => {
       try {
         // Ensure volume is set before playing
-        audio.volume = 0.3;
+        audio.volume = 0.1;
         await audio.play();
         setIsMusicPlaying(true);
       } catch (error) {
@@ -418,7 +418,7 @@ export default function BinarySearchVisualizer() {
               audio.pause();
               setIsMusicPlaying(false);
             } else {
-              audio.volume = 0.3; // Set volume to 30% to reduce loudness
+              audio.volume = 0.1; // Set volume to 10% to reduce loudness even more
               audio.play().catch(e => console.log("Playback failed:", e));
               setIsMusicPlaying(true);
             }
@@ -784,6 +784,14 @@ export default function BinarySearchVisualizer() {
                 <div className="w-full flex flex-col items-center">
                   <Button
                     onClick={() => {
+                      // Start the music when "I am ready" is clicked
+                      const audio = audioRef.current;
+                      if (audio) {
+                        audio.volume = 0.1; // Set volume to 10% to reduce loudness even more
+                        audio.play().catch(e => console.log("Playback failed:", e));
+                        setIsMusicPlaying(true);
+                      }
+                      
                       setFadeOutText(true);
                       setIsRainActive(true); // Activate rain when ready
                       // Set a timeout to ensure content appears even if animation fails
