@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SpriteAnimation, { SpriteState } from '@/components/SpriteAnimation';
 import ArrayElement from '@/components/ArrayElement';
 import { Play, RotateCcw, Sparkles } from 'lucide-react';
@@ -31,6 +32,83 @@ export default function BinarySearchVisualizer() {
   const [arrayOffset, setArrayOffset] = useState(200); // Dynamic offset for array positioning
   const [showSlashEffect, setShowSlashEffect] = useState(false); // Visual slash effect
   const arrayRef = useRef<HTMLDivElement>(null);
+  const [isProblemOpen, setIsProblemOpen] = useState(false);
+  const [problemText, setProblemText] = useState<string>("");
+  const [problemTitle, setProblemTitle] = useState<string>("Samurai and the Hidden Plank");
+  const [problemBody, setProblemBody] = useState<string>("");
+
+  useEffect(() => {
+    fetch('/api/problem-statement')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then((text) => {
+        // Check if the response looks like HTML
+        if (text.trim().startsWith('<') || text.includes('<html') || text.includes('<!DOCTYPE')) {
+          throw new Error('Received HTML instead of plain text');
+        }
+        setProblemText(text);
+      })
+      .catch((error) => {
+        console.error('Error fetching problem statement from API:', error);
+        // Fallback to loading from the local public directory
+        return fetch('/problem_statement.txt')
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then((text) => {
+            console.log('Successfully loaded problem statement from local file');
+            setProblemText(text);
+          })
+          .catch((localError) => {
+            console.error('Error fetching problem statement from local file:', localError);
+            setProblemText("Failed to load problem statement.");
+          });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!problemText) {
+      setProblemTitle("Samurai and the Hidden Plank");
+      setProblemBody("");
+      return;
+    }
+
+    // Check if we received an error message
+    if (problemText === "Failed to load problem statement.") {
+      setProblemTitle("Problem Statement");
+      setProblemBody("Failed to load problem statement.");
+      return;
+    }
+
+    // Check if we received a 404 message
+    if (problemText === "Problem statement file not found.") {
+      setProblemTitle("Problem Statement");
+      setProblemBody("Problem statement file not found.");
+      return;
+    }
+
+    const lines = problemText.split(/\r?\n/);
+    // find first non-empty line as title
+    const firstNonEmptyIndex = lines.findIndex((l) => l.trim().length > 0);
+    if (firstNonEmptyIndex === -1) {
+      setProblemTitle("Samurai and the Hidden Plank");
+      setProblemBody("");
+      return;
+    }
+
+    const titleLine = lines[firstNonEmptyIndex].trim();
+    // body is everything after the title line
+    const bodyLines = lines.slice(firstNonEmptyIndex + 1);
+    setProblemTitle(titleLine);
+    setProblemBody(bodyLines.join("\n").trimStart());
+  }, [problemText]);
 
   const generateNewArray = () => {
     const size = 8 + Math.floor(Math.random() * 5);
@@ -156,6 +234,29 @@ export default function BinarySearchVisualizer() {
 
   return (
     <div className="h-screen relative overflow-hidden">
+      {/* Problem Statement Button */}
+      <div className="absolute top-4 left-4 z-20">
+        <Dialog open={isProblemOpen} onOpenChange={setIsProblemOpen}>
+          <DialogTrigger asChild>
+            <Button
+              className="h-10 px-4 bg-gradient-to-r from-amber-800 to-red-800 hover:from-amber-700 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-md hover:shadow-amber-500/20"
+              style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+            >
+              Problem Statement
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl bg-gradient-to-br from-amber-950 to-red-950 border-amber-700/50">
+            <DialogHeader>
+              <DialogTitle className="text-2xl text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+                {problemTitle}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-amber-100 leading-relaxed font-serif" style={{ fontFamily: 'Merriweather, serif' }}>
+              {problemBody}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
       {/* Layered Background */}
       <div className="absolute inset-0 z-0">
         <img src={layer11} alt="" className="absolute inset-0 w-full h-full object-cover" />

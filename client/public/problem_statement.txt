@@ -1,0 +1,50 @@
+Problem Title: Samurai and the Hidden Plank
+
+Problem Statement
+
+A disciplined samurai stands before a line of n wooden planks, each having a distinct height a_i. The planks are arranged in strictly increasing order — from the shortest to the tallest.
+
+The samurai is looking for a specific plank of height x. However, he refuses to look at every plank one by one. Instead, he uses his sharp senses — a binary search technique — to find whether the plank exists.
+
+Your task is simple: determine whether the plank of height x is present among the n planks.
+
+Input
+
+The first line contains two integers n and x — the number of planks and the height the samurai seeks.
+
+The second line contains n distinct integers a_1, a_2, ..., a_n — the heights of the planks in increasing order.
+
+Output
+
+Print:
+- "FOUND" — if the plank of height x exists.
+- "NOT FOUND" — otherwise.
+
+Constraints
+- 1 ≤ n ≤ 10^5
+- 1 ≤ a_i, x ≤ 10^9
+- a_1 < a_2 < ... < a_n
+
+Example 1
+
+Input:
+6 26
+3 9 14 26 37 41
+
+Output:
+FOUND
+
+Explanation:
+The samurai finds the plank of height 26 exactly at position 4.
+
+Example 2
+
+Input:
+5 25
+2 8 13 19 40
+
+Output:
+NOT FOUND
+
+Explanation:
+The samurai searches carefully but finds no plank of height 25.

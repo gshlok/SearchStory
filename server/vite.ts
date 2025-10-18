@@ -19,10 +19,10 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
-export async function setupVite(app: Express, server: Server) {
+export async function setupVite(app: Express): Promise<Server> {
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server },
+    hmr: { server: undefined },
     allowedHosts: true as const,
   };
 
@@ -41,6 +41,9 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
+  const httpServer = require("http").createServer(app);
+  serverOptions.hmr.server = httpServer;
+
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
@@ -65,6 +68,8 @@ export async function setupVite(app: Express, server: Server) {
       next(e);
     }
   });
+
+  return httpServer;
 }
 
 export function serveStatic(app: Express) {
