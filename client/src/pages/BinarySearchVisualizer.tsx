@@ -408,16 +408,16 @@ export default function BinarySearchVisualizer() {
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 drop-shadow-lg tracking-wide" data-testid="text-title" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(255,215,0,0.3)' }}>
             The Samurai's Quest
           </h1>
-          <div 
+          <div
             className="text-2xl md:text-3xl text-white/90 max-w-3xl mx-auto drop-shadow font-serif py-2"
-            style={{ 
-              fontFamily: 'Merriweather, serif', 
+            style={{
+              fontFamily: 'Merriweather, serif',
               textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
             }}
           >
             {fadeOutText ? (
-              <WindBlownText 
-                text="Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique" 
+              <WindBlownText
+                text="Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique"
                 isActive={fadeOutText}
                 onCompletion={() => setIsReady(true)}
               />
@@ -450,21 +450,29 @@ export default function BinarySearchVisualizer() {
                       className="flex flex-col gap-2 justify-center items-center mb-4 transition-transform duration-500 ease-in-out"
                       style={{ transform: `translateX(${arrayOffset}px)` }}
                     >
-                      {array.map((value, index) => (
-                        <ArrayElement
-                          key={index}
-                          value={value}
-                          index={index}
-                          isActive={currentIndex === index || secondIndex === index}
-                          isTarget={searchState === 'found' && currentIndex === index}
-                          isEliminated={eliminatedIndices.has(index)}
-                          highlight={sortingStep?.i === index || sortingStep?.j === index} // Highlight during sorting
-                          isSwapping={swappingElements?.index === index}
-                          swapDirection={swappingElements?.index === index ? swappingElements.direction : undefined}
-                          onEdit={handleElementEdit}
-                          isEditing={editingIndex === index}
-                        />
-                      ))}
+                      {(() => {
+                        // Find min and max values in the current array for scaling
+                        const minValue = Math.min(...array);
+                        const maxValue = Math.max(...array);
+                        
+                        return array.map((value, index) => (
+                          <ArrayElement
+                            key={index}
+                            value={value}
+                            index={index}
+                            isActive={currentIndex === index || secondIndex === index}
+                            isTarget={searchState === 'found' && currentIndex === index}
+                            isEliminated={eliminatedIndices.has(index)}
+                            highlight={sortingStep?.i === index || sortingStep?.j === index} // Highlight during sorting
+                            isSwapping={swappingElements?.index === index}
+                            swapDirection={swappingElements?.index === index ? swappingElements.direction : undefined}
+                            onEdit={handleElementEdit}
+                            isEditing={editingIndex === index}
+                            minValue={minValue}
+                            maxValue={maxValue}
+                          />
+                        ));
+                      })()}
                     </div>
 
                     {/* Slash Effect */}

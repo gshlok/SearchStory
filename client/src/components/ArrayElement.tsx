@@ -12,6 +12,8 @@ interface ArrayElementProps {
   swapDirection?: 'left' | 'right'; // New prop for swap direction
   onEdit?: (index: number, newValue: number) => void; // New prop for editing
   isEditing?: boolean; // New prop to indicate if this element is being edited
+  minValue?: number; // Minimum value in the array for scaling
+  maxValue?: number; // Maximum value in the array for scaling
 }
 
 export default function ArrayElement({ 
@@ -24,10 +26,27 @@ export default function ArrayElement({
   isSwapping,
   swapDirection,
   onEdit,
-  isEditing
+  isEditing,
+  minValue = 0,
+  maxValue = 100
 }: ArrayElementProps) {
   const [isEditingValue, setIsEditingValue] = useState(false);
   const [editValue, setEditValue] = useState(value.toString());
+
+  // Calculate width based on relative value
+  const calculateWidth = () => {
+    // Avoid division by zero
+    const range = maxValue - minValue;
+    if (range === 0) return '100px'; // Default width if all values are the same
+    
+    // Calculate percentage (0-100%) and map to a reasonable width range (80px to 200px)
+    const percentage = ((value - minValue) / range) * 100;
+    const minWidth = 80;
+    const maxWidth = 200;
+    const width = minWidth + (percentage / 100) * (maxWidth - minWidth);
+    
+    return `${width}px`;
+  };
 
   // Update editValue when the prop value changes
   useEffect(() => {
@@ -67,7 +86,7 @@ export default function ArrayElement({
     return (
       <div
         className={cn(
-          "min-w-12 min-h-14 flex items-center justify-center rounded-lg border transition-all duration-500",
+          "min-h-14 flex items-center justify-center rounded-lg border transition-all duration-500",
           "bg-gradient-to-br from-amber-800/80 to-red-800/80 border-amber-600/60 shadow-lg",
           isActive && "ring-2 ring-amber-400 shadow-xl shadow-amber-400/30 scale-105 z-10 bg-gradient-to-br from-amber-700/90 to-red-700/90",
           isTarget && "bg-gradient-to-br from-green-800/80 to-emerald-800/80 border-green-500/60 ring-2 ring-green-400 shadow-xl shadow-green-400/30",
@@ -75,6 +94,7 @@ export default function ArrayElement({
           highlight && "ring-2 ring-blue-400 shadow-xl shadow-blue-400/30 bg-gradient-to-br from-blue-700/90 to-indigo-700/90"
         )}
         style={{
+          width: calculateWidth(),
           boxShadow: isActive 
             ? '0 0 20px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)' 
             : isTarget 
@@ -91,7 +111,7 @@ export default function ArrayElement({
           onKeyDown={handleKeyDown}
           onBlur={handleSave}
           autoFocus
-          className="w-16 text-center bg-amber-900/50 text-amber-100 border border-amber-600 rounded px-1 font-serif font-bold"
+          className="w-full text-center bg-amber-900/50 text-amber-100 border border-amber-600 rounded px-1 font-serif font-bold"
           style={{ 
             fontFamily: 'Libre Baskerville, serif',
             textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
@@ -104,7 +124,7 @@ export default function ArrayElement({
   return (
     <div
       className={cn(
-        "min-w-12 min-h-14 flex items-center justify-center rounded-lg border transition-all duration-500 cursor-pointer",
+        "min-h-14 flex items-center justify-center rounded-lg border transition-all duration-500 cursor-pointer",
         "bg-gradient-to-br from-amber-800/80 to-red-800/80 border-amber-600/60 shadow-lg",
         isActive && "ring-2 ring-amber-400 shadow-xl shadow-amber-400/30 scale-105 z-10 bg-gradient-to-br from-amber-700/90 to-red-700/90",
         isTarget && "bg-gradient-to-br from-green-800/80 to-emerald-800/80 border-green-500/60 ring-2 ring-green-400 shadow-xl shadow-green-400/30",
@@ -116,6 +136,7 @@ export default function ArrayElement({
       onClick={handleEditClick}
       data-testid={`array-element-${index}`}
       style={{
+        width: calculateWidth(),
         boxShadow: isActive 
           ? '0 0 20px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)' 
           : isTarget 
