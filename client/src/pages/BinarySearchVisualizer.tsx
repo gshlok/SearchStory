@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from '@/components/ui/alert-dialog';
 import SpriteAnimation, { SpriteState } from '@/components/SpriteAnimation';
 import ArrayElement from '@/components/ArrayElement';
 import { Play, RotateCcw, Sparkles, ArrowUp } from 'lucide-react';
@@ -40,6 +41,7 @@ export default function BinarySearchVisualizer() {
   const [problemText, setProblemText] = useState<string>("");
   const [problemTitle, setProblemTitle] = useState<string>("Samurai and the Hidden Plank");
   const [problemBody, setProblemBody] = useState<string>("");
+  const [showUnsortedDialog, setShowUnsortedDialog] = useState(false);
 
   useEffect(() => {
     fetch('/api/problem-statement')
@@ -231,9 +233,25 @@ export default function BinarySearchVisualizer() {
     setSortingStep(null);
   };
 
+  // Helper function to check if array is sorted
+  const isArraySorted = (arr: number[]): boolean => {
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] > arr[i + 1]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const startSearch = () => {
     const targetNum = parseInt(target);
     if (isNaN(targetNum)) return;
+
+    // Check if array is sorted before starting search
+    if (!isArraySorted(array)) {
+      setShowUnsortedDialog(true);
+      return;
+    }
 
     setSearchState('searching');
     setStepCount(0);
@@ -491,6 +509,30 @@ export default function BinarySearchVisualizer() {
           </div>
         </div>
       </div>
+
+      {/* Unsorted Array Dialog */}
+      <AlertDialog open={showUnsortedDialog} onOpenChange={setShowUnsortedDialog}>
+        <AlertDialogContent className="max-w-md bg-gradient-to-br from-amber-900 to-red-900 border-2 border-amber-600 shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl text-center text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+              The Way of the Samurai
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription className="text-center text-amber-200 font-serif text-lg leading-relaxed" style={{ fontFamily: 'Merriweather, serif' }}>
+            An unsorted array is like wild bamboo; no clean cut can be made there. The blade of binary search cuts only through order.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogAction 
+              onClick={() => setShowUnsortedDialog(false)}
+              className="bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300 w-full py-3"
+              style={{ fontFamily: 'Merriweather, serif' }}
+            >
+              Understood
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </div>
   );
 }
