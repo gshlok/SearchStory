@@ -481,7 +481,7 @@ export default function BinarySearchVisualizer() {
 
         {/* Sprite - always visible */}
         <div className="flex-1 flex">
-          <div className="flex-1 flex flex-col justify-end pb-6 px-4">
+          <div className="flex-1 flex flex-col justify-end pb-6 px-4 md:pb-6">
             <div className="w-full max-w-2xl">
               <div className="relative h-80 flex flex-col justify-end items-center">
                 {/* Sprite Animation - always visible */}
@@ -547,89 +547,160 @@ export default function BinarySearchVisualizer() {
 
           {/* Control Card - only visible when ready with fade-in */}
           {isReady && (
-            <div className={`w-96 p-6 flex items-end pb-6 transition-opacity duration-1000 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
-              <Card className="p-8 w-full bg-gradient-to-br from-amber-900/90 to-red-900/90 backdrop-blur-sm border-2 border-amber-600/50 shadow-2xl" style={{ boxShadow: '0 0 30px rgba(255,215,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
-                <h3 className="text-xl font-bold mb-6 text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Sacred Scrolls</h3>
+            <>
+              {/* Desktop Card Layout */}
+              <div className={`w-96 p-6 flex items-end pb-6 transition-opacity duration-1000 hidden md:flex ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+                <Card className="p-8 w-full bg-gradient-to-br from-amber-900/90 to-red-900/90 backdrop-blur-sm border-2 border-amber-600/50 shadow-2xl" style={{ boxShadow: '0 0 30px rgba(255,215,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
+                  <h3 className="text-xl font-bold mb-6 text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Sacred Scrolls</h3>
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="text-base text-amber-200 mb-3 block font-serif font-semibold" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Seek the Sacred Number</label>
-                    <Input
-                      type="number"
-                      value={target}
-                      onChange={(e) => setTarget(e.target.value)}
-                      disabled={searchState === 'searching'}
-                      className="font-mono h-12 text-lg bg-amber-800/50 border-amber-600/70 text-amber-100 placeholder:text-amber-300 focus:border-amber-400 focus:ring-amber-400/50"
-                      data-testid="input-target"
-                      placeholder="Enter the sacred number..."
-                    />
+                  <div className="space-y-6">
+                    <div>
+                      <label className="text-base text-amber-200 mb-3 block font-serif font-semibold" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Seek the Sacred Number</label>
+                      <Input
+                        type="number"
+                        value={target}
+                        onChange={(e) => setTarget(e.target.value)}
+                        disabled={searchState === 'searching'}
+                        className="font-mono h-12 text-lg bg-amber-800/50 border-amber-600/70 text-amber-100 placeholder:text-amber-300 focus:border-amber-400 focus:ring-amber-400/50"
+                        data-testid="input-target"
+                        placeholder="Enter the sacred number..."
+                      />
+                    </div>
+
+                    <div className="space-y-3">
+                      <Button
+                        onClick={startSearch}
+                        disabled={searchState === 'searching' || isSorting}
+                        className="w-full h-12 text-lg bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 border-2 border-red-500/50 text-red-100 font-serif font-bold shadow-lg hover:shadow-red-500/25 transition-all duration-300"
+                        data-testid="button-search"
+                        style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                      >
+                        <Play className="w-5 h-5 mr-2" />
+                        Begin the Quest
+                      </Button>
+
+                      <Button
+                        onClick={nextStep}
+                        disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound' || isSorting}
+                        className="w-full h-12 text-lg bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
+                        variant="secondary"
+                        data-testid="button-next-step"
+                        style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Next Step
+                      </Button>
+
+                      {/* New Sort Array Button */}
+                      <Button
+                        onClick={bubbleSort}
+                        disabled={searchState === 'searching' || isSorting}
+                        className="w-full h-12 text-lg bg-gradient-to-r from-green-700 to-green-800 hover:from-green-600 hover:to-green-700 border-2 border-green-500/50 text-green-100 font-serif font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 mt-2"
+                        variant="secondary"
+                        style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                      >
+                        <ArrowUp className="w-5 h-5 mr-2" />
+                        Sort Scrolls
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        onClick={generateNewArray}
+                        disabled={searchState === 'searching' || isSorting}
+                        variant="outline"
+                        className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
+                        data-testid="button-new-array"
+                        style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        New Scrolls
+                      </Button>
+
+                      <Button
+                        onClick={resetSearch}
+                        disabled={searchState === 'searching' || isSorting}
+                        variant="outline"
+                        className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
+                        data-testid="button-reset"
+                        style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                      >
+                        <RotateCcw className="w-5 h-5 mr-2" />
+                        Reset Quest
+                      </Button>
+                    </div>
                   </div>
+                </Card>
+              </div>
 
-                  <div className="space-y-3">
-                    <Button
-                      onClick={startSearch}
-                      disabled={searchState === 'searching' || isSorting}
-                      className="w-full h-12 text-lg bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 border-2 border-red-500/50 text-red-100 font-serif font-bold shadow-lg hover:shadow-red-500/25 transition-all duration-300"
-                      data-testid="button-search"
-                      style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                    >
-                      <Play className="w-5 h-5 mr-2" />
-                      Begin the Quest
-                    </Button>
+              {/* Mobile/Tablet Navbar Layout */}
+              <div className={`fixed bottom-0 left-0 right-0 bg-gradient-to-r from-amber-900 to-red-900 border-t-2 border-amber-600/50 p-2 md:hidden transition-opacity duration-1000 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="flex justify-around items-center">
+                  <Button
+                    onClick={startSearch}
+                    disabled={searchState === 'searching' || isSorting}
+                    className="flex flex-col items-center justify-center h-16 px-2 text-amber-100"
+                    variant="ghost"
+                  >
+                    <Play className="w-6 h-6 mb-1" />
+                    <span className="text-xs font-serif">Begin</span>
+                  </Button>
 
-                    <Button
-                      onClick={nextStep}
-                      disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound' || isSorting}
-                      className="w-full h-12 text-lg bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
-                      variant="secondary"
-                      data-testid="button-next-step"
-                      style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                    >
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Next Step
-                    </Button>
+                  <Button
+                    onClick={nextStep}
+                    disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound' || isSorting}
+                    className="flex flex-col items-center justify-center h-16 px-2 text-amber-100"
+                    variant="ghost"
+                  >
+                    <Sparkles className="w-6 h-6 mb-1" />
+                    <span className="text-xs font-serif">Next</span>
+                  </Button>
 
-                    {/* New Sort Array Button */}
-                    <Button
-                      onClick={bubbleSort}
-                      disabled={searchState === 'searching' || isSorting}
-                      className="w-full h-12 text-lg bg-gradient-to-r from-green-700 to-green-800 hover:from-green-600 hover:to-green-700 border-2 border-green-500/50 text-green-100 font-serif font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 mt-2"
-                      variant="secondary"
-                      style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                    >
-                      <ArrowUp className="w-5 h-5 mr-2" />
-                      Sort Scrolls
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={bubbleSort}
+                    disabled={searchState === 'searching' || isSorting}
+                    className="flex flex-col items-center justify-center h-16 px-2 text-amber-100"
+                    variant="ghost"
+                  >
+                    <ArrowUp className="w-6 h-6 mb-1" />
+                    <span className="text-xs font-serif">Sort</span>
+                  </Button>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      onClick={generateNewArray}
-                      disabled={searchState === 'searching' || isSorting}
-                      variant="outline"
-                      className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
-                      data-testid="button-new-array"
-                      style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                    >
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      New Scrolls
-                    </Button>
+                  <Button
+                    onClick={generateNewArray}
+                    disabled={searchState === 'searching' || isSorting}
+                    className="flex flex-col items-center justify-center h-16 px-2 text-amber-100"
+                    variant="ghost"
+                  >
+                    <Sparkles className="w-6 h-6 mb-1" />
+                    <span className="text-xs font-serif">New</span>
+                  </Button>
 
-                    <Button
-                      onClick={resetSearch}
-                      disabled={searchState === 'searching' || isSorting}
-                      variant="outline"
-                      className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
-                      data-testid="button-reset"
-                      style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                    >
-                      <RotateCcw className="w-5 h-5 mr-2" />
-                      Reset Quest
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={resetSearch}
+                    disabled={searchState === 'searching' || isSorting}
+                    className="flex flex-col items-center justify-center h-16 px-2 text-amber-100"
+                    variant="ghost"
+                  >
+                    <RotateCcw className="w-6 h-6 mb-1" />
+                    <span className="text-xs font-serif">Reset</span>
+                  </Button>
                 </div>
-              </Card>
-            </div>
+                
+                {/* Target Input for Mobile */}
+                <div className="flex items-center mt-2 px-2">
+                  <label className="text-amber-200 text-xs font-serif mr-2">Target:</label>
+                  <Input
+                    type="number"
+                    value={target}
+                    onChange={(e) => setTarget(e.target.value)}
+                    disabled={searchState === 'searching'}
+                    className="flex-1 font-mono text-sm bg-amber-800/50 border-amber-600/70 text-amber-100 placeholder:text-amber-300 focus:border-amber-400 focus:ring-amber-400/50"
+                    placeholder="Number..."
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           {/* "I am ready" button - only show if not ready */}
