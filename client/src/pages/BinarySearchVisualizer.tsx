@@ -24,8 +24,8 @@ import layer10 from '@assets/Layer_0010_1_1760630184418.png';
 import layer11 from '@assets/Layer_0011_0_1760630184418.png';
 
 export default function BinarySearchVisualizer() {
-  const [array, setArray] = useState<number[]>([3, 7, 12, 18, 25, 31, 42, 56, 67]);
-  const [target, setTarget] = useState<string>('42');
+  const [array, setArray] = useState<number[]>([7, 3, 18, 12, 25, 42, 31, 56, 67]);
+  const [target, setTarget] = useState<string>('3');
   const [searchState, setSearchState] = useState<'idle' | 'searching' | 'found' | 'notfound'>('idle');
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [secondIndex, setSecondIndex] = useState<number | null>(null); // For bubble sort comparison
@@ -49,6 +49,9 @@ export default function BinarySearchVisualizer() {
   const [problemTitle, setProblemTitle] = useState<string>("Samurai and the Hidden Plank");
   const [problemBody, setProblemBody] = useState<string>("");
   const [showUnsortedDialog, setShowUnsortedDialog] = useState(false);
+
+  // Add new state for button positioning
+  const [isButtonExpanded, setIsButtonExpanded] = useState(false);
 
   // Initialize typewriter effect for the descriptive text
   const { displayText } = useTypewriter({
@@ -362,29 +365,74 @@ export default function BinarySearchVisualizer() {
 
   return (
     <div className="h-screen relative overflow-hidden">
-      {/* Problem Statement Button */}
-      <div className="absolute top-4 left-4 z-20">
-        <Dialog open={isProblemOpen} onOpenChange={setIsProblemOpen}>
-          <DialogTrigger asChild>
+      {/* Problem Statement Button - always present but changes behavior based on state */}
+      <div className={`absolute z-20 transition-all duration-700 ease-in-out ${isReady ? 'top-4 left-4' : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}`}>
+        {!isReady ? (
+          // Before ready: Show in-place when expanded
+          isButtonExpanded ? (
+            <div className="w-full max-w-3xl">
+              <div className="bg-gradient-to-br from-amber-900 to-red-900 border-2 border-amber-700/50 rounded-lg shadow-2xl p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+                    {problemTitle}
+                  </h2>
+                  <Button
+                    onClick={() => setIsButtonExpanded(false)}
+                    className="h-8 px-3 bg-amber-800 hover:bg-amber-700 text-amber-100 font-serif"
+                    style={{ fontFamily: 'Merriweather, serif' }}
+                  >
+                    Close
+                  </Button>
+                </div>
+                <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap text-amber-100 leading-relaxed font-serif" style={{ fontFamily: 'Merriweather, serif' }}>
+                  {problemBody}
+                </div>
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    onClick={() => setIsButtonExpanded(false)}
+                    className="h-10 px-6 bg-gradient-to-r from-amber-700 to-red-800 hover:from-amber-600 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-md hover:shadow-amber-500/20"
+                    style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Before ready: Show button when not expanded
             <Button
-              className="h-10 px-4 bg-gradient-to-r from-amber-800 to-red-800 hover:from-amber-700 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-md hover:shadow-amber-500/20"
+              className="h-12 px-6 text-lg bg-gradient-to-r from-amber-800 to-red-800 hover:from-amber-700 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/20 transition-all duration-300"
               style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+              onClick={() => setIsButtonExpanded(true)}
             >
               Problem Statement
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl bg-gradient-to-br from-amber-950 to-red-950 border-amber-700/50">
-            <DialogHeader>
-              <DialogTitle className="text-2xl text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
-                {problemTitle}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-amber-100 leading-relaxed font-serif" style={{ fontFamily: 'Merriweather, serif' }}>
-              {problemBody}
-            </div>
-          </DialogContent>
-        </Dialog>
+          )
+        ) : (
+          // After ready: Always show as dialog button
+          <Dialog open={isProblemOpen} onOpenChange={setIsProblemOpen}>
+            <DialogTrigger asChild>
+              <Button
+                className="h-10 px-4 bg-gradient-to-r from-amber-800 to-red-800 hover:from-amber-700 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-md hover:shadow-amber-500/20"
+                style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+              >
+                Problem Statement
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl bg-gradient-to-br from-amber-950 to-red-950 border-amber-700/50">
+              <DialogHeader>
+                <DialogTitle className="text-2xl text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+                  {problemTitle}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-amber-100 leading-relaxed font-serif" style={{ fontFamily: 'Merriweather, serif' }}>
+                {problemBody}
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
+
       {/* Layered Background */}
       <div className="absolute inset-0 z-0">
         <img src={layer11} alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -590,6 +638,7 @@ export default function BinarySearchVisualizer() {
                 <Button
                   onClick={() => {
                     setFadeOutText(true);
+                    setIsButtonExpanded(false); // Move problem statement button to top-left
                     // Set a timeout to ensure content appears even if animation fails
                     setTimeout(() => {
                       setIsReady(true);
