@@ -54,6 +54,10 @@ export default function BinarySearchVisualizer() {
   // Add new state for button positioning
   const [isButtonExpanded, setIsButtonExpanded] = useState(false);
 
+  // Add state for music control
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   // Initialize typewriter effect for the descriptive text
   const { displayText } = useTypewriter({
     text: "Follow the warrior's journey as he searches through the ancient scrolls using the sacred binary search technique",
@@ -71,6 +75,35 @@ export default function BinarySearchVisualizer() {
       return () => clearTimeout(timer);
     }
   }, [isReady]);
+
+  // Handle background music
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Set initial volume to 30% to reduce loudness
+    audio.volume = 0.3;
+
+    const playMusic = async () => {
+      try {
+        // Ensure volume is set before playing
+        audio.volume = 0.3;
+        await audio.play();
+        setIsMusicPlaying(true);
+      } catch (error) {
+        console.log("Autoplay prevented, music will play on user interaction");
+      }
+    };
+
+    // Try to play music when component mounts
+    playMusic();
+
+    return () => {
+      if (audio) {
+        audio.pause();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     fetch('/api/problem-statement')
@@ -366,6 +399,46 @@ export default function BinarySearchVisualizer() {
 
   return (
     <div className="h-screen relative overflow-hidden md:h-screen">
+      {/* Hidden audio element for background music */}
+      <audio 
+        ref={audioRef}
+        loop
+        preload="auto"
+      >
+        <source src="/background-music.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+      
+      {/* Music control button (optional) */}
+      <button 
+        onClick={() => {
+          const audio = audioRef.current;
+          if (audio) {
+            if (isMusicPlaying) {
+              audio.pause();
+              setIsMusicPlaying(false);
+            } else {
+              audio.volume = 0.3; // Set volume to 30% to reduce loudness
+              audio.play().catch(e => console.log("Playback failed:", e));
+              setIsMusicPlaying(true);
+            }
+          }
+        }}
+        className="absolute top-4 right-4 z-30 p-2 bg-amber-900/50 rounded-full text-amber-100 hover:bg-amber-800 transition-all"
+        aria-label={isMusicPlaying ? "Pause music" : "Play music"}
+      >
+        {isMusicPlaying ? (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )}
+      </button>
+      
       {/* Problem Statement Button - always present but changes behavior based on state */}
       <div className={`absolute z-20 transition-all duration-700 ease-in-out ${isReady ? 'top-4 left-4' : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}`}>
         {!isReady ? (
