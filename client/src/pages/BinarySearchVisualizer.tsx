@@ -397,6 +397,19 @@ export default function BinarySearchVisualizer() {
     setShowSlashEffect(false); // Hide slash effect
   };
 
+  // Automatically trigger the first step when search begins
+  useEffect(() => {
+    if (searchState === 'searching' && searchBoundaries && stepCount === 0) {
+      // Use a small delay to ensure all state updates are processed
+      const timer = setTimeout(() => {
+        nextStep();
+      }, 100);
+      
+      // Clean up the timer
+      return () => clearTimeout(timer);
+    }
+  }, [searchState, searchBoundaries, stepCount]);
+
   return (
     <div className="h-screen relative overflow-hidden md:h-screen">
       {/* Hidden audio element for background music */}
