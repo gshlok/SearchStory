@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
+import { createServer as createHttpServer } from "http"; // Import createServer directly
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
@@ -20,10 +21,10 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express): Promise<Server> {
-  const serverOptions = {
+  const serverOptions: any = {
     middlewareMode: true,
     hmr: { server: undefined },
-    allowedHosts: true as const,
+    allowedHosts: true,
   };
 
   const vite = await createViteServer({
@@ -41,8 +42,14 @@ export async function setupVite(app: Express): Promise<Server> {
   });
 
   app.use(vite.middlewares);
-  const httpServer = require("http").createServer(app);
-  serverOptions.hmr.server = httpServer;
+  const httpServer = vite.httpServer; // Use vite's httpServer
+  
+  // Create our own server if vite doesn't provide one
+  const serverToReturn = httpServer || createHttpServer(app);
+  
+  if (httpServer) {
+    serverOptions.hmr.server = httpServer;
+  }
 
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
@@ -69,7 +76,8 @@ export async function setupVite(app: Express): Promise<Server> {
     }
   });
 
-  return httpServer;
+  // Return the server
+  return serverToReturn as Server;
 }
 
 export function serveStatic(app: Express) {

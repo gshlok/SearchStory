@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SpriteAnimation, { SpriteState } from '@/components/SpriteAnimation';
 import ArrayElement from '@/components/ArrayElement';
-import { Play, RotateCcw, Sparkles } from 'lucide-react';
+import { Play, RotateCcw, Sparkles, ArrowUp } from 'lucide-react';
 import layer0 from '@assets/Layer_0000_9_1760630184411.png';
 import layer1 from '@assets/Layer_0001_8_1760630184412.png';
 import layer2 from '@assets/Layer_0002_7_1760630184412.png';
@@ -24,6 +24,7 @@ export default function BinarySearchVisualizer() {
   const [target, setTarget] = useState<string>('42');
   const [searchState, setSearchState] = useState<'idle' | 'searching' | 'found' | 'notfound'>('idle');
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [secondIndex, setSecondIndex] = useState<number | null>(null); // For bubble sort comparison
   const [eliminatedIndices, setEliminatedIndices] = useState<Set<number>>(new Set());
   const [spriteState, setSpriteState] = useState<SpriteState>('IDLE');
   const [spritePosition, setSpritePosition] = useState({ x: 100, y: 450 }); // Adjusted sprite position
@@ -31,6 +32,9 @@ export default function BinarySearchVisualizer() {
   const [searchBoundaries, setSearchBoundaries] = useState<{ left: number; right: number } | null>(null);
   const [arrayOffset, setArrayOffset] = useState(200); // Dynamic offset for array positioning
   const [showSlashEffect, setShowSlashEffect] = useState(false); // Visual slash effect
+  const [isSorting, setIsSorting] = useState(false); // New state for sorting
+  const [sortingStep, setSortingStep] = useState<{i: number, j: number} | null>(null); // Track current sorting positions
+  const [swappingElements, setSwappingElements] = useState<{index: number, direction: 'left' | 'right'} | null>(null); // Track swapping elements
   const arrayRef = useRef<HTMLDivElement>(null);
   const [isProblemOpen, setIsProblemOpen] = useState(false);
   const [problemText, setProblemText] = useState<string>("");
@@ -114,12 +118,18 @@ export default function BinarySearchVisualizer() {
     const size = 5 + Math.floor(Math.random() * 5); // Now generates 5-9 elements
     const newArray: number[] = [];
     let current = Math.floor(Math.random() * 10) + 1;
-    
+
     for (let i = 0; i < size; i++) {
       newArray.push(current);
       current += Math.floor(Math.random() * 10) + 3;
     }
-    
+
+    // Shuffle the array to make it unsorted
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+
     setArray(newArray);
     setTarget(newArray[Math.floor(Math.random() * newArray.length)].toString());
     resetSearch();
@@ -128,6 +138,7 @@ export default function BinarySearchVisualizer() {
   const resetSearch = () => {
     setSearchState('idle');
     setCurrentIndex(null);
+    setSecondIndex(null);
     setEliminatedIndices(new Set());
     setSpriteState('IDLE');
     setSpritePosition({ x: 100, y: 450 }); // Keep sprite in adjusted position
@@ -135,28 +146,93 @@ export default function BinarySearchVisualizer() {
     setSearchBoundaries(null);
     setArrayOffset(200); // Reset array offset
     setShowSlashEffect(false); // Reset slash effect
+    setIsSorting(false);
+    setSortingStep(null);
+    setSwappingElements(null); // Reset swapping elements
   };
 
   const getElementPosition = (index: number) => {
     if (!arrayRef.current) return { x: 50, y: 300 };
-    
+
     const arrayContainer = arrayRef.current;
     const element = arrayContainer.children[index] as HTMLElement;
-    
+
     if (element) {
       const containerRect = arrayContainer.getBoundingClientRect();
       const elementRect = element.getBoundingClientRect();
-      
+
       return {
         x: elementRect.left - containerRect.left + elementRect.width / 2,
         y: 300, // Keep sprite at the same vertical level
       };
     }
-    
+
     return { x: 50, y: 300 };
   };
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  // New bubble sort function with animations
+  const bubbleSort = async () => {
+    if (isSorting) return;
+    
+    setIsSorting(true);
+    setSearchState('searching'); // Disable other controls during sorting
+    let newArray = [...array];
+    const n = newArray.length;
+    
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        // Highlight elements being compared
+        setSortingStep({i: j, j: j+1});
+        setCurrentIndex(j);
+        setSecondIndex(j+1);
+        setSpriteState('IDLE'); // Use idle animation instead of attack
+        
+        // Move sprite to the position of the first element being compared
+        if (arrayRef.current) {
+          const pos = getElementPosition(j);
+          setSpritePosition({ x: pos.x, y: pos.y + 150 });
+        }
+        
+        await sleep(300); // Increased speed (was 600)
+        
+        if (newArray[j] > newArray[j + 1]) {
+          // Animate the swap with visual trail
+          setSwappingElements({index: j, direction: 'left'});
+          setSwappingElements({index: j+1, direction: 'right'});
+          
+          // Wait for animation
+          await sleep(200);
+          
+          // Actually swap the elements
+          const temp = newArray[j];
+          newArray = [...newArray];
+          newArray[j] = newArray[j + 1];
+          newArray[j + 1] = temp;
+          setArray(newArray);
+          
+          // Reset swapping state
+          setSwappingElements(null);
+          
+          // Visual feedback for swap
+          await sleep(100); // Shorter delay for faster animation
+        }
+        
+        // Reset highlights
+        setCurrentIndex(null);
+        setSecondIndex(null);
+      }
+    }
+    
+    // Sorting complete
+    setSpriteState('THINKING');
+    await sleep(500); // Shorter completion delay
+    setSpriteState('IDLE');
+    setIsSorting(false);
+    setSearchState('idle');
+    setSortingStep(null);
+  };
 
   const startSearch = () => {
     const targetNum = parseInt(target);
@@ -207,7 +283,7 @@ export default function BinarySearchVisualizer() {
 
     const eliminated = new Set(eliminatedIndices);
     let newOffset = arrayOffset;
-    
+
     if (array[mid] < targetNum) {
       // Eliminate left half, move array right
       for (let i = left; i <= mid; i++) {
@@ -288,7 +364,7 @@ export default function BinarySearchVisualizer() {
           <div className="flex-1 flex flex-col justify-end pb-6 px-4">
             <div className="w-full max-w-2xl">
               <div className="relative h-80 flex flex-col justify-end items-center">
-                <div 
+                <div
                   ref={arrayRef}
                   className="flex flex-col gap-2 justify-center items-center mb-4 transition-transform duration-500 ease-in-out"
                   style={{ transform: `translateX(${arrayOffset}px)` }}
@@ -298,9 +374,12 @@ export default function BinarySearchVisualizer() {
                       key={index}
                       value={value}
                       index={index}
-                      isActive={currentIndex === index}
+                      isActive={currentIndex === index || secondIndex === index}
                       isTarget={searchState === 'found' && currentIndex === index}
                       isEliminated={eliminatedIndices.has(index)}
+                      highlight={sortingStep?.i === index || sortingStep?.j === index} // Highlight during sorting
+                      isSwapping={swappingElements?.index === index}
+                      swapDirection={swappingElements?.index === index ? swappingElements.direction : undefined}
                     />
                   ))}
                 </div>
@@ -313,7 +392,7 @@ export default function BinarySearchVisualizer() {
 
                 {/* Slash Effect */}
                 {showSlashEffect && (
-                  <div 
+                  <div
                     className="absolute pointer-events-none"
                     style={{
                       left: `${spritePosition.x + 200}px`,
@@ -333,7 +412,7 @@ export default function BinarySearchVisualizer() {
           <div className="w-96 p-6 flex items-end pb-6">
             <Card className="p-8 w-full bg-gradient-to-br from-amber-900/90 to-red-900/90 backdrop-blur-sm border-2 border-amber-600/50 shadow-2xl" style={{ boxShadow: '0 0 30px rgba(255,215,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
               <h3 className="text-xl font-bold mb-6 text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Sacred Scrolls</h3>
-              
+
               <div className="space-y-6">
                 <div>
                   <label className="text-base text-amber-200 mb-3 block font-serif font-semibold" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Seek the Sacred Number</label>
@@ -351,7 +430,7 @@ export default function BinarySearchVisualizer() {
                 <div className="space-y-3">
                   <Button
                     onClick={startSearch}
-                    disabled={searchState === 'searching'}
+                    disabled={searchState === 'searching' || isSorting}
                     className="w-full h-12 text-lg bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 border-2 border-red-500/50 text-red-100 font-serif font-bold shadow-lg hover:shadow-red-500/25 transition-all duration-300"
                     data-testid="button-search"
                     style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
@@ -362,7 +441,7 @@ export default function BinarySearchVisualizer() {
 
                   <Button
                     onClick={nextStep}
-                    disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound'}
+                    disabled={!searchBoundaries || searchState === 'found' || searchState === 'notfound' || isSorting}
                     className="w-full h-12 text-lg bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300"
                     variant="secondary"
                     data-testid="button-next-step"
@@ -371,12 +450,24 @@ export default function BinarySearchVisualizer() {
                     <Sparkles className="w-5 h-5 mr-2" />
                     Next Step
                   </Button>
+                  
+                  {/* New Sort Array Button */}
+                  <Button
+                    onClick={bubbleSort}
+                    disabled={searchState === 'searching' || isSorting}
+                    className="w-full h-12 text-lg bg-gradient-to-r from-green-700 to-green-800 hover:from-green-600 hover:to-green-700 border-2 border-green-500/50 text-green-100 font-serif font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 mt-2"
+                    variant="secondary"
+                    style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                  >
+                    <ArrowUp className="w-5 h-5 mr-2" />
+                    Sort Scrolls
+                  </Button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     onClick={generateNewArray}
-                    disabled={searchState === 'searching'}
+                    disabled={searchState === 'searching' || isSorting}
                     variant="outline"
                     className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
                     data-testid="button-new-array"
@@ -388,7 +479,7 @@ export default function BinarySearchVisualizer() {
 
                   <Button
                     onClick={resetSearch}
-                    disabled={searchState === 'searching'}
+                    disabled={searchState === 'searching' || isSorting}
                     variant="outline"
                     className="h-12 border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/30 hover:border-amber-500 font-serif font-bold transition-all duration-300"
                     data-testid="button-reset"
