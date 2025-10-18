@@ -38,6 +38,7 @@ export default function BinarySearchVisualizer() {
   const [swappingElements, setSwappingElements] = useState<{index: number, direction: 'left' | 'right'} | null>(null); // Track swapping elements
   const [isReady, setIsReady] = useState(false); // New state to control visibility
   const [showContent, setShowContent] = useState(false); // New state for fade-in animation
+  const [editingIndex, setEditingIndex] = useState<number | null>(null); // New state for tracking which element is being edited
   const arrayRef = useRef<HTMLDivElement>(null);
   const [isProblemOpen, setIsProblemOpen] = useState(false);
   const [problemText, setProblemText] = useState<string>("");
@@ -256,6 +257,18 @@ export default function BinarySearchVisualizer() {
     return true;
   };
 
+  const handleElementEdit = (index: number, newValue: number) => {
+    const newArray = [...array];
+    newArray[index] = newValue;
+    setArray(newArray);
+    setEditingIndex(null);
+    
+    // If the target was this element, update the target as well
+    if (target === array[index].toString()) {
+      setTarget(newValue.toString());
+    }
+  };
+
   const startSearch = () => {
     const targetNum = parseInt(target);
     if (isNaN(targetNum)) return;
@@ -419,6 +432,8 @@ export default function BinarySearchVisualizer() {
                           highlight={sortingStep?.i === index || sortingStep?.j === index} // Highlight during sorting
                           isSwapping={swappingElements?.index === index}
                           swapDirection={swappingElements?.index === index ? swappingElements.direction : undefined}
+                          onEdit={handleElementEdit}
+                          isEditing={editingIndex === index}
                         />
                       ))}
                     </div>
