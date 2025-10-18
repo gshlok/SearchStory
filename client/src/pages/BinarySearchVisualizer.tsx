@@ -20,7 +20,7 @@ import layer10 from '@assets/Layer_0010_1_1760630184418.png';
 import layer11 from '@assets/Layer_0011_0_1760630184418.png';
 
 export default function BinarySearchVisualizer() {
-  const [array, setArray] = useState<number[]>([3, 7, 12, 18, 25, 31, 42, 56, 67, 73]);
+  const [array, setArray] = useState<number[]>([3, 7, 12, 18, 25, 31, 42, 56, 67]);
   const [target, setTarget] = useState<string>('42');
   const [searchState, setSearchState] = useState<'idle' | 'searching' | 'found' | 'notfound'>('idle');
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
@@ -111,7 +111,7 @@ export default function BinarySearchVisualizer() {
   }, [problemText]);
 
   const generateNewArray = () => {
-    const size = 8 + Math.floor(Math.random() * 5);
+    const size = 5 + Math.floor(Math.random() * 5); // Now generates 5-9 elements
     const newArray: number[] = [];
     let current = Math.floor(Math.random() * 10) + 1;
     
