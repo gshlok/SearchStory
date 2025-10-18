@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react';
 
+interface RainEffectProps {
+    isActive?: boolean;
+}
+
 class RainDrop {
     x: number;
     y: number;
@@ -65,10 +69,11 @@ class RainDrop {
     }
 }
 
-const RainEffect = () => {
+const RainEffect = ({ isActive = true }: RainEffectProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rainDropsRef = useRef<RainDrop[]>([]);
     const animationRef = useRef<number>(0);
+    const intensityRef = useRef<number>(0); // Track rain intensity (0 to 1)
 
     // Configuration constants
     const INIT_RAIN_DROP_COUNT = 500;
@@ -85,9 +90,14 @@ const RainEffect = () => {
     const VERTICAL_OFFSET_RATE = 0.04;
     const FRONT_THRESHOLD = 0.8;
     const REFLECTION_RADIUS_RATE = 0.02;
+    const INTENSITY_INCREASE_RATE = 0.02; // How quickly rain intensity increases
+    const MAX_DROPS_FACTOR = 2; // Factor to multiply drop creation when at full intensity
 
     const createRainDrops = (count: number, toInit: boolean, width: number, height: number) => {
-        for (let i = 0; i < count; i++) {
+        // Scale the number of drops based on current intensity
+        const actualCount = Math.floor(count * intensityRef.current * MAX_DROPS_FACTOR);
+        
+        for (let i = 0; i < actualCount; i++) {
             rainDropsRef.current.push(new RainDrop(
                 width, height, toInit,
                 SCALE_RANGE, VELOCITY_RANGE, VELOCITY_RATE, LENGTH_RATE,
@@ -98,13 +108,18 @@ const RainEffect = () => {
 
     const render = () => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas || !isActive) return;
 
         const context = canvas.getContext('2d');
         if (!context) return;
 
         const width = canvas.width;
         const height = canvas.height;
+
+        // Gradually increase intensity when active
+        if (isActive && intensityRef.current < 1) {
+            intensityRef.current = Math.min(1, intensityRef.current + INTENSITY_INCREASE_RATE);
+        }
 
         // Clear with transparent background instead of colored background
         context.clearRect(0, 0, width, height);
@@ -123,7 +138,7 @@ const RainEffect = () => {
             }
         }
 
-        // Create new rain drops
+        // Create new rain drops based on current intensity
         createRainDrops(RAIN_DROP_COUNT, false, width, height);
 
         animationRef.current = requestAnimationFrame(render);
@@ -131,7 +146,7 @@ const RainEffect = () => {
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas || !isActive) return;
 
         // Set canvas size
         const container = canvas.parentElement;
@@ -140,8 +155,11 @@ const RainEffect = () => {
             canvas.height = container.clientHeight;
         }
 
-        // Clear array
-        rainDropsRef.current = [];
+        // Clear array and reset intensity when becoming active
+        if (isActive) {
+            rainDropsRef.current = [];
+            intensityRef.current = 0; // Start with no rain
+        }
 
         // Create initial rain drops
         createRainDrops(INIT_RAIN_DROP_COUNT, true, canvas.width, canvas.height);
@@ -168,7 +186,7 @@ const RainEffect = () => {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationRef.current);
         };
-    }, []);
+    }, [isActive]);
 
     return (
         <canvas

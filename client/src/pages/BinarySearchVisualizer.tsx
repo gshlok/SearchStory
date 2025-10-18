@@ -43,6 +43,7 @@ export default function BinarySearchVisualizer() {
   const [showContent, setShowContent] = useState(false); // New state for fade-in animation
   const [editingIndex, setEditingIndex] = useState<number | null>(null); // New state for tracking which element is being edited
   const [fadeOutText, setFadeOutText] = useState(false); // New state for text fade-out animation
+  const [isRainActive, setIsRainActive] = useState(false); // New state to control rain effect
   const arrayRef = useRef<HTMLDivElement>(null);
   const [isProblemOpen, setIsProblemOpen] = useState(false);
   const [problemText, setProblemText] = useState<string>("");
@@ -447,7 +448,7 @@ export default function BinarySearchVisualizer() {
         <img src={layer2} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <img src={layer1} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <img src={layer0} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <RainEffect />
+        <RainEffect isActive={isRainActive} />
       </div>
 
       {/* Content */}
@@ -638,7 +639,7 @@ export default function BinarySearchVisualizer() {
                 <Button
                   onClick={() => {
                     setFadeOutText(true);
-                    setIsButtonExpanded(false); // Move problem statement button to top-left
+                    setIsRainActive(true); // Activate rain when ready
                     // Set a timeout to ensure content appears even if animation fails
                     setTimeout(() => {
                       setIsReady(true);
