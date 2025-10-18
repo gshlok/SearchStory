@@ -189,11 +189,8 @@ export default function BinarySearchVisualizer() {
         setSecondIndex(j+1);
         setSpriteState('IDLE'); // Use idle animation instead of attack
         
-        // Move sprite to the position of the first element being compared
-        if (arrayRef.current) {
-          const pos = getElementPosition(j);
-          setSpritePosition({ x: pos.x, y: pos.y + 150 });
-        }
+        // Keep sprite in fixed position during sorting
+        // Removed the sprite position update that was causing the shift
         
         await sleep(300); // Increased speed (was 600)
         
