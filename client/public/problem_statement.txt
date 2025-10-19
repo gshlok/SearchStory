@@ -4,7 +4,7 @@ Problem Statement
 
 A disciplined samurai stands before a line of n wooden planks, each having a distinct height a_i. The planks are arranged in strictly increasing order — from the shortest to the tallest.
 
-The samurai is looking for a specific plank of height x. However, he refuses to look at every plank one by one. Instead, he uses his sharp senses — a binary search technique — to find whether the plank exists.
+The samurai is looking for a specific plank of height x. However, he refuses to look at every plank one by one. Instead, he uses his sharp senses to find whether the plank exists.
 
 Your task is simple: determine whether the plank of height x is present among the n planks.
 
