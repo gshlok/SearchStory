@@ -2,7 +2,7 @@
 
 An immersive, interactive visualization of the binary search algorithm presented as a samurai-themed educational experience. Follow the warrior's journey as he searches through ancient scrolls using the sacred binary search technique.
 
-![Binary Search Visualization](attached_assets/Layer_0010_1_1760630184418.png)
+![Binary Search Visualization]
 
 ## Table of Contents
 
@@ -159,7 +159,3 @@ The application visualizes the solution to the following problem:
 > The samurai is looking for a specific plank of height x. However, he refuses to look at every plank one by one. Instead, he uses his sharp senses to find whether the plank exists.
 > 
 > Your task is simple: determine whether the plank of height x is present among the n planks.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
