@@ -50,6 +50,8 @@ export default function BinarySearchVisualizer() {
   const [problemTitle, setProblemTitle] = useState<string>("Samurai and the Hidden Plank");
   const [problemBody, setProblemBody] = useState<string>("");
   const [showUnsortedDialog, setShowUnsortedDialog] = useState(false);
+  // Add new state for zoom warning
+  const [showZoomWarning, setShowZoomWarning] = useState(false);
 
   // Add new state for button positioning
   const [isButtonExpanded, setIsButtonExpanded] = useState(false);
@@ -409,6 +411,39 @@ export default function BinarySearchVisualizer() {
       return () => clearTimeout(timer);
     }
   }, [searchState, searchBoundaries, stepCount]);
+
+  // Add zoom detection effect
+  useEffect(() => {
+    const detectZoom = () => {
+      // Check device pixel ratio
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      
+      // Check if 1 CSS pixel equals 1 device pixel using a test element
+      const testElement = document.createElement('div');
+      testElement.style.width = '1in';
+      document.body.appendChild(testElement);
+      const isOneInch = testElement.offsetWidth === 96;
+      document.body.removeChild(testElement);
+      
+      // If devicePixelRatio is not 1 or inch test fails, zoom might be active
+      return devicePixelRatio !== 1 || !isOneInch;
+    };
+
+    const checkZoomAndShowWarning = () => {
+      const isZoomed = detectZoom();
+      setShowZoomWarning(isZoomed);
+    };
+
+    // Check on mount
+    checkZoomAndShowWarning();
+    
+    // Check when window is resized (zoom changes trigger resize)
+    window.addEventListener('resize', checkZoomAndShowWarning);
+    
+    return () => {
+      window.removeEventListener('resize', checkZoomAndShowWarning);
+    };
+  }, []);
 
   return (
     <div className="h-screen relative overflow-hidden md:h-screen">
@@ -842,6 +877,31 @@ export default function BinarySearchVisualizer() {
               style={{ fontFamily: 'Merriweather, serif' }}
             >
               Understood
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Zoom Warning Dialog */}
+      <AlertDialog open={showZoomWarning} onOpenChange={setShowZoomWarning}>
+        <AlertDialogContent className="max-w-md bg-gradient-to-br from-amber-900 to-red-900 border-2 border-amber-600 shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl text-center text-amber-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+              Optimal Viewing Experience
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription className="text-center text-amber-200 font-serif text-lg leading-relaxed" style={{ fontFamily: 'Merriweather, serif' }}>
+            For the best experience with this visualization, we recommend setting your browser zoom to 100%. 
+            Press <kbd className="px-2 py-1 bg-amber-800 rounded">Ctrl</kbd> + <kbd className="px-2 py-1 bg-amber-800 rounded">0</kbd> (Windows) 
+            or <kbd className="px-2 py-1 bg-amber-800 rounded">Cmd</kbd> + <kbd className="px-2 py-1 bg-amber-800 rounded">0</kbd> (Mac) to reset zoom.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => setShowZoomWarning(false)}
+              className="bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-2 border-amber-500/50 text-amber-100 font-serif font-bold shadow-lg hover:shadow-amber-500/25 transition-all duration-300 w-full py-3"
+              style={{ fontFamily: 'Merriweather, serif' }}
+            >
+              Continue Anyway
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
