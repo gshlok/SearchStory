@@ -40,6 +40,8 @@ export default function LinearSearchVisualizer() {
     const [editingIndex, setEditingIndex] = useState<number | null>(null); // New state for tracking which element is being edited
     const [fadeOutText, setFadeOutText] = useState(false); // New state for text fade-out animation
     const [isRainActive, setIsRainActive] = useState(false); // New state to control rain effect
+    // Add new state to track animation completion
+    const [isAnimationComplete, setIsAnimationComplete] = useState(true);
     const arrayRef = useRef<HTMLDivElement>(null);
     const [isProblemOpen, setIsProblemOpen] = useState(false);
     const [problemText, setProblemText] = useState<string>("");
@@ -207,6 +209,7 @@ export default function LinearSearchVisualizer() {
         setStepCount(0);
         setArrayOffset(200); // Reset array offset
         setShowSlashEffect(false); // Reset slash effect
+        setIsAnimationComplete(true); // Reset animation state
     };
 
     const getElementPosition = (index: number) => {
@@ -252,6 +255,7 @@ export default function LinearSearchVisualizer() {
         setEliminatedIndices(new Set());
         setSpriteState('IDLE');
         setSpritePosition({ x: 100, y: 450 }); // Keep sprite in adjusted position
+        setIsAnimationComplete(false); // Animation starts, so it's not complete
         
         // Automatically trigger the first step
         setTimeout(() => {
@@ -260,6 +264,9 @@ export default function LinearSearchVisualizer() {
     };
 
     const nextStep = async () => {
+        // If animation is in progress, don't allow next step
+        if (!isAnimationComplete) return;
+        
         const targetNum = parseInt(target);
         
         // If we've already checked all elements
@@ -271,6 +278,9 @@ export default function LinearSearchVisualizer() {
             return;
         }
 
+        // Set animation as in progress
+        setIsAnimationComplete(false);
+        
         // Move to next element
         const currentIndex = stepCount;
         setCurrentIndex(currentIndex);
@@ -294,6 +304,7 @@ export default function LinearSearchVisualizer() {
             setSearchState('found');
             await sleep(1500);
             setSpriteState('IDLE');
+            setIsAnimationComplete(true); // Animation complete
         } else {
             // Attack animation when element doesn't match
             setSpriteState('ATTACK');
@@ -308,6 +319,7 @@ export default function LinearSearchVisualizer() {
             await sleep(800);
             setSpriteState('IDLE');
             setShowSlashEffect(false); // Hide slash effect
+            setIsAnimationComplete(true); // Animation complete
         }
     };
 
@@ -511,6 +523,7 @@ export default function LinearSearchVisualizer() {
                                         state={spriteState}
                                         position={spritePosition}
                                         scale={7}
+                                        onAnimationComplete={() => setIsAnimationComplete(true)}
                                     />
 
                                     {/* Array and other elements - only visible when ready with fade-in */}
@@ -603,7 +616,7 @@ export default function LinearSearchVisualizer() {
 
                                                 <Button
                                                     onClick={nextStep}
-                                                    disabled={searchState !== 'searching'}
+                                                    disabled={searchState !== 'searching' || !isAnimationComplete}
                                                     className="w-full h-12 text-lg bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-600 hover:to-blue-700 border-2 border-blue-500/50 text-blue-100 font-serif font-bold shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
                                                     variant="secondary"
                                                     data-testid="button-next-step"
@@ -658,7 +671,7 @@ export default function LinearSearchVisualizer() {
 
                                         <Button
                                             onClick={nextStep}
-                                            disabled={searchState !== 'searching'}
+                                            disabled={searchState !== 'searching' || !isAnimationComplete}
                                             className="flex flex-col items-center justify-center h-16 px-2 text-blue-100"
                                             variant="ghost"
                                         >
