@@ -559,7 +559,7 @@ export default function LinearSearchVisualizer() {
                                                 })()}
                                             </div>
 
-                                            {/* Slash Effect */}
+                                            {/* Slash Effect - removed the red glow */}
                                             {showSlashEffect && (
                                                 <div
                                                     className="absolute pointer-events-none"
@@ -568,7 +568,7 @@ export default function LinearSearchVisualizer() {
                                                         top: `${spritePosition.y - 200}px`,
                                                         width: '300px',
                                                         height: '400px',
-                                                        background: 'linear-gradient(45deg, transparent 40%, rgba(255, 0, 0, 0.3) 50%, transparent 60%)',
+                                                        background: 'transparent',
                                                         transform: 'rotate(-15deg)',
                                                         animation: 'slashEffect 0.8s ease-out',
                                                     }}
