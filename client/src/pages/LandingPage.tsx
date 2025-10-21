@@ -58,8 +58,8 @@ export default function LandingPage() {
                         </Link>
                     </div>
 
-                    {/* Add the View Technique button */}
-                    <div className="mt-12">
+                    {/* View Technique button */}
+                    <div className="mt-12 flex justify-center">
                         <Link href="/technique">
                             <Button className="h-16 px-8 text-xl bg-gradient-to-r from-purple-700 to-pink-800 hover:from-purple-600 hover:to-pink-700 border-2 border-purple-500/60 text-purple-100 font-serif font-bold shadow-lg hover:shadow-purple-500/25 transition-all duration-300" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)', minWidth: '280px' }}>
                                 View Technique

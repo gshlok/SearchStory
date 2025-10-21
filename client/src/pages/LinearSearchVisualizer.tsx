@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from "wouter";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -256,7 +257,7 @@ export default function LinearSearchVisualizer() {
         setSpriteState('IDLE');
         setSpritePosition({ x: 100, y: 450 }); // Keep sprite in adjusted position
         setIsAnimationComplete(false); // Animation starts, so it's not complete
-        
+
         // Automatically trigger the first step
         setTimeout(() => {
             nextStep();
@@ -266,9 +267,9 @@ export default function LinearSearchVisualizer() {
     const nextStep = async () => {
         // If animation is in progress, don't allow next step
         if (!isAnimationComplete) return;
-        
+
         const targetNum = parseInt(target);
-        
+
         // If we've already checked all elements
         if (stepCount >= array.length) {
             setSearchState('notfound');
@@ -280,7 +281,7 @@ export default function LinearSearchVisualizer() {
 
         // Set animation as in progress
         setIsAnimationComplete(false);
-        
+
         // Move to next element
         const currentIndex = stepCount;
         setCurrentIndex(currentIndex);
@@ -289,7 +290,7 @@ export default function LinearSearchVisualizer() {
         // Update sprite position to current element
         const position = getElementPosition(currentIndex);
         setSpritePosition(position);
-        
+
         // Add to visited indices
         const newVisited = new Set(visitedIndices);
         newVisited.add(currentIndex);
@@ -310,12 +311,12 @@ export default function LinearSearchVisualizer() {
             setSpriteState('ATTACK');
             setShowSlashEffect(true); // Show slash effect
             await sleep(800);
-            
+
             // Mark element as eliminated
             const newEliminated = new Set(eliminatedIndices);
             newEliminated.add(currentIndex);
             setEliminatedIndices(newEliminated);
-            
+
             await sleep(800);
             setSpriteState('IDLE');
             setShowSlashEffect(false); // Hide slash effect
@@ -414,7 +415,7 @@ export default function LinearSearchVisualizer() {
                 }
                 `
             }} />
-            
+
             {/* Hidden audio element for background music */}
             <audio
                 ref={audioRef}
@@ -454,6 +455,18 @@ export default function LinearSearchVisualizer() {
                     </svg>
                 )}
             </button>
+
+            {/* Home button */}
+            <div className="absolute top-4 right-16 z-30">
+                <Link to="/">
+                    <Button
+                        className="h-8 px-3 bg-gradient-to-r from-blue-800 to-indigo-800 hover:from-blue-700 hover:to-indigo-700 border-2 border-blue-500/60 text-blue-100 font-serif font-bold shadow-md hover:shadow-blue-500/20 text-sm"
+                        style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                    >
+                        Home
+                    </Button>
+                </Link>
+            </div>
 
             {/* Problem Statement Button - always present but changes behavior based on state */}
             <div className={`absolute z-20 transition-all duration-700 ease-in-out ${isReady ? 'top-4 left-4' : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}`}>
@@ -501,24 +514,24 @@ export default function LinearSearchVisualizer() {
                 ) : (
                     // After ready: Always show as dialog button
                     <Dialog open={isProblemOpen} onOpenChange={setIsProblemOpen}>
-                      <DialogTrigger asChild>
-                        <Button
-                          className="h-10 px-4 bg-gradient-to-r from-blue-800 to-indigo-800 hover:from-blue-700 hover:to-indigo-700 border-2 border-blue-500/60 text-blue-100 font-serif font-bold shadow-md hover:shadow-blue-500/20"
-                          style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                        >
-                          Problem Statement
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-3xl bg-gradient-to-br from-blue-950 to-indigo-950 border-blue-700/50">
-                        <DialogHeader>
-                          <DialogTitle className="text-2xl text-blue-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
-                            {problemTitle}
-                          </DialogTitle>
-                        </DialogHeader>
-                        <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-blue-100 leading-relaxed font-serif custom-scrollbar" style={{ fontFamily: 'Merriweather, serif' }}>
-                          {problemBody}
-                        </div>
-                      </DialogContent>
+                        <DialogTrigger asChild>
+                            <Button
+                                className="h-10 px-4 bg-gradient-to-r from-blue-800 to-indigo-800 hover:from-blue-700 hover:to-indigo-700 border-2 border-blue-500/60 text-blue-100 font-serif font-bold shadow-md hover:shadow-blue-500/20"
+                                style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                            >
+                                Problem Statement
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl bg-gradient-to-br from-blue-950 to-indigo-950 border-blue-700/50">
+                            <DialogHeader>
+                                <DialogTitle className="text-2xl text-blue-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+                                    {problemTitle}
+                                </DialogTitle>
+                            </DialogHeader>
+                            <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-blue-100 leading-relaxed font-serif custom-scrollbar" style={{ fontFamily: 'Merriweather, serif' }}>
+                                {problemBody}
+                            </div>
+                        </DialogContent>
                     </Dialog>
                 )}
             </div>

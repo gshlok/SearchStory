@@ -1,8 +1,8 @@
-# The Samurai's Quest - Binary Search Visualizer
+# The Samurai's Quest - Search Algorithm Visualizer
 
-An immersive, interactive visualization of the binary search algorithm presented as a samurai-themed educational experience. Follow the warrior's journey as he searches through ancient scrolls using the sacred binary search technique.
+An immersive, interactive visualization of both binary and linear search algorithms presented as a samurai-themed educational experience. Follow the warrior's journey as he searches through ancient scrolls using the sacred search techniques.
 
-![Binary Search Visualization]
+![Search Algorithm Visualization]
 
 ## Table of Contents
 
@@ -19,14 +19,16 @@ An immersive, interactive visualization of the binary search algorithm presented
 
 ## Features
 
-- 🎮 **Interactive Visualization**: Watch the binary search algorithm in action with animated elements
+- 🎮 **Interactive Visualization**: Watch both binary and linear search algorithms in action with animated elements
 - 🧘 **Samurai Theme**: Engaging narrative with sprite animations and immersive environment
 - 🎵 **Atmospheric Soundtrack**: Background music to enhance the experience
 - 🌧️ **Dynamic Weather Effects**: Rain effects that activate during the journey
 - 📱 **Responsive Design**: Works on desktop and mobile devices
 - 🎨 **Dark Mode UI**: Beautiful dark-themed interface with gradient accents
 - ⚡ **Real-time Animations**: Smooth transitions and visual feedback
-- 🎯 **Educational Experience**: Learn binary search through storytelling
+- 🎯 **Educational Experience**: Learn search algorithms through storytelling
+- 🔍 **Algorithm Comparison**: Dedicated technique page comparing binary and linear search
+- 🎨 **Custom Scrollbars**: Beautifully styled scrollbars throughout the application
 
 ## Tech Stack
 
@@ -119,8 +121,9 @@ SearchStory/
 
 ## How It Works
 
-The application visualizes the binary search algorithm through a samurai-themed narrative:
+The application visualizes both binary and linear search algorithms through a samurai-themed narrative:
 
+### Binary Search
 1. **The Setup**: A samurai faces a line of wooden planks (array elements) arranged in increasing order
 2. **The Quest**: The samurai seeks a specific plank height (target value)
 3. **The Technique**: Instead of checking every plank, the samurai uses binary search:
@@ -132,9 +135,28 @@ The application visualizes the binary search algorithm through a samurai-themed 
    - Eliminated planks fade out with visual effects
    - Success is celebrated with animations
 
+### Linear Search
+1. **The Setup**: A samurai faces a line of wooden planks (array elements) in any order
+2. **The Quest**: The samurai seeks a specific plank height (target value)
+3. **The Technique**: The samurai checks each plank one by one:
+   - Compare the target with each plank sequentially
+   - Continue until the target is found or all planks are checked
+4. **Visual Feedback**: 
+   - Sprite character moves to inspect planks
+   - Non-matching planks are eliminated with visual effects
+   - Success is celebrated with animations
+
+### Technique Comparison
+A dedicated page compares both algorithms:
+- Time complexity analysis
+- C++ implementation examples
+- Visual side-by-side comparison
+
 ### Key Components
 
-- **BinarySearchVisualizer**: Main visualization component
+- **BinarySearchVisualizer**: Binary search visualization component
+- **LinearSearchVisualizer**: Linear search visualization component
+- **TechniquePage**: Algorithm comparison page
 - **SpriteAnimation**: Animated samurai character with different states
 - **ArrayElement**: Visual representation of array elements
 - **RainEffect**: Atmospheric weather effects
@@ -149,6 +171,7 @@ The project follows specific design principles outlined in [design_guidelines.md
 - **Layout**: Responsive grid system with consistent spacing
 - **Animations**: Purposeful animations that enhance understanding
 - **Accessibility**: Proper contrast ratios and focus indicators
+- **Custom Scrollbars**: Consistently styled scrollbars across all scrollable elements
 
 ## Problem Statement
 

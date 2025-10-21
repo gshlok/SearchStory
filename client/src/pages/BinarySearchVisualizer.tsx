@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from "wouter";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -503,7 +504,7 @@ export default function BinarySearchVisualizer() {
         }
         `
       }} />
-      
+
       {/* Hidden audio element for background music */}
       <audio
         ref={audioRef}
@@ -543,6 +544,18 @@ export default function BinarySearchVisualizer() {
           </svg>
         )}
       </button>
+
+      {/* Home button */}
+      <div className="absolute top-4 right-16 z-30">
+        <Link to="/">
+          <Button
+            className="h-8 px-3 bg-gradient-to-r from-amber-800 to-red-800 hover:from-amber-700 hover:to-red-700 border-2 border-amber-500/60 text-amber-100 font-serif font-bold shadow-md hover:shadow-amber-500/20 text-sm"
+            style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+          >
+            Home
+          </Button>
+        </Link>
+      </div>
 
       {/* Problem Statement Button - always present but changes behavior based on state */}
       <div className={`absolute z-20 transition-all duration-700 ease-in-out ${isReady ? 'top-4 left-4' : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}`}>
