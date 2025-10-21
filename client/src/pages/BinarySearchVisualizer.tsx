@@ -406,7 +406,7 @@ export default function BinarySearchVisualizer() {
       const timer = setTimeout(() => {
         nextStep();
       }, 100);
-      
+
       // Clean up the timer
       return () => clearTimeout(timer);
     }
@@ -417,14 +417,14 @@ export default function BinarySearchVisualizer() {
     const detectZoom = () => {
       // Check device pixel ratio
       const devicePixelRatio = window.devicePixelRatio || 1;
-      
+
       // Check if 1 CSS pixel equals 1 device pixel using a test element
       const testElement = document.createElement('div');
       testElement.style.width = '1in';
       document.body.appendChild(testElement);
       const isOneInch = testElement.offsetWidth === 96;
       document.body.removeChild(testElement);
-      
+
       // If devicePixelRatio is not 1 or inch test fails, zoom might be active
       return devicePixelRatio !== 1 || !isOneInch;
     };
@@ -436,10 +436,10 @@ export default function BinarySearchVisualizer() {
 
     // Check on mount
     checkZoomAndShowWarning();
-    
+
     // Check when window is resized (zoom changes trigger resize)
     window.addEventListener('resize', checkZoomAndShowWarning);
-    
+
     return () => {
       window.removeEventListener('resize', checkZoomAndShowWarning);
     };
@@ -448,7 +448,7 @@ export default function BinarySearchVisualizer() {
   return (
     <div className="h-screen relative overflow-hidden md:h-screen">
       {/* Hidden audio element for background music */}
-      <audio 
+      <audio
         ref={audioRef}
         loop
         preload="auto"
@@ -456,9 +456,9 @@ export default function BinarySearchVisualizer() {
         <source src="/background-music.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
-      
+
       {/* Music control button (optional) */}
-      <button 
+      <button
         onClick={() => {
           const audio = audioRef.current;
           if (audio) {
@@ -486,7 +486,7 @@ export default function BinarySearchVisualizer() {
           </svg>
         )}
       </button>
-      
+
       {/* Problem Statement Button - always present but changes behavior based on state */}
       <div className={`absolute z-20 transition-all duration-700 ease-in-out ${isReady ? 'top-4 left-4' : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}`}>
         {!isReady ? (
@@ -626,7 +626,7 @@ export default function BinarySearchVisualizer() {
                           // Find min and max values in the current array for scaling
                           const minValue = Math.min(...array);
                           const maxValue = Math.max(...array);
-                          
+
                           return array.map((value, index) => (
                             <ArrayElement
                               key={index}
@@ -809,7 +809,7 @@ export default function BinarySearchVisualizer() {
                       <span className="text-xs font-serif">Reset</span>
                     </Button>
                   </div>
-                  
+
                   {/* Target Input for Mobile */}
                   <div className="flex items-center mt-2 px-2">
                     <label className="text-amber-200 text-xs font-serif mr-2">Target:</label>
@@ -839,7 +839,7 @@ export default function BinarySearchVisualizer() {
                         audio.play().catch(e => console.log("Playback failed:", e));
                         setIsMusicPlaying(true);
                       }
-                      
+
                       setFadeOutText(true);
                       setIsRainActive(true); // Activate rain when ready
                       // Set a timeout to ensure content appears even if animation fails
@@ -891,8 +891,8 @@ export default function BinarySearchVisualizer() {
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogDescription className="text-center text-amber-200 font-serif text-lg leading-relaxed" style={{ fontFamily: 'Merriweather, serif' }}>
-            For the best experience with this visualization, we recommend setting your browser zoom to 100%. 
-            Press <kbd className="px-2 py-1 bg-amber-800 rounded">Ctrl</kbd> + <kbd className="px-2 py-1 bg-amber-800 rounded">0</kbd> (Windows) 
+            For the best experience with this visualization, we recommend setting your browser zoom to 100%.
+            Press <kbd className="px-2 py-1 bg-amber-800 rounded">Ctrl</kbd> + <kbd className="px-2 py-1 bg-amber-800 rounded">0</kbd> (Windows)
             or <kbd className="px-2 py-1 bg-amber-800 rounded">Cmd</kbd> + <kbd className="px-2 py-1 bg-amber-800 rounded">0</kbd> (Mac) to reset zoom.
           </AlertDialogDescription>
           <AlertDialogFooter>
