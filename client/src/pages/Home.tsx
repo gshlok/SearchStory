@@ -1,5 +1,5 @@
-import BinarySearchVisualizer from './BinarySearchVisualizer';
+import LandingPage from './LandingPage';
 
 export default function Home() {
-  return <BinarySearchVisualizer />;
+  return <LandingPage />;
 }
