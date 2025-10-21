@@ -58,6 +58,15 @@ export default function LandingPage() {
                         </Link>
                     </div>
 
+                    {/* Add the View Technique button */}
+                    <div className="mt-12">
+                        <Link href="/technique">
+                            <Button className="h-16 px-8 text-xl bg-gradient-to-r from-purple-700 to-pink-800 hover:from-purple-600 hover:to-pink-700 border-2 border-purple-500/60 text-purple-100 font-serif font-bold shadow-lg hover:shadow-purple-500/25 transition-all duration-300" style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)', minWidth: '280px' }}>
+                                View Technique
+                            </Button>
+                        </Link>
+                    </div>
+
                     <div className="mt-20 text-amber-200/80 text-lg font-serif max-w-2xl mx-auto" style={{ fontFamily: 'Merriweather, serif' }}>
                         <p className="mb-4">Choose your path, young warrior. Will you master the swift precision of the Binary Samurai,</p>
                         <p>or the thorough determination of the Linear Samurai?</p>

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "@/pages/LandingPage";
 import BinarySearchVisualizer from "@/pages/BinarySearchVisualizer";
 import LinearSearchVisualizer from "@/pages/LinearSearchVisualizer";
+import TechniquePage from "@/pages/TechniquePage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={LandingPage} />
       <Route path="/binary" component={BinarySearchVisualizer} />
       <Route path="/linear" component={LinearSearchVisualizer} />
+      <Route path="/technique" component={TechniquePage} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -358,6 +358,63 @@ export default function LinearSearchVisualizer() {
 
     return (
         <div className="h-screen relative overflow-hidden md:h-screen">
+            {/* Custom scrollbar styles */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                /* Webkit browsers (Chrome, Safari, Edge) */
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 12px;
+                    height: 12px;
+                }
+
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.1);
+                    border-radius: 10px;
+                }
+
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: linear-gradient(180deg, #8B5CF6, #6366F1);
+                    border-radius: 10px;
+                    border: 2px solid rgba(0, 0, 0, 0.1);
+                }
+
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(180deg, #7C3AED, #4F46E5);
+                }
+
+                /* Firefox */
+                .custom-scrollbar {
+                    scrollbar-width: thin;
+                    scrollbar-color: #8B5CF6 rgba(0, 0, 0, 0.1);
+                }
+
+                /* For code blocks */
+                .code-scrollbar::-webkit-scrollbar {
+                    width: 8px;
+                    height: 8px;
+                }
+
+                .code-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 6px;
+                }
+
+                .code-scrollbar::-webkit-scrollbar-thumb {
+                    background: linear-gradient(180deg, #4F46E5, #3730A3);
+                    border-radius: 6px;
+                }
+
+                .code-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(180deg, #4338CA, #312E81);
+                }
+
+                .code-scrollbar {
+                    scrollbar-width: thin;
+                    scrollbar-color: #4F46E5 rgba(0, 0, 0, 0.2);
+                }
+                `
+            }} />
+            
             {/* Hidden audio element for background music */}
             <audio
                 ref={audioRef}
@@ -444,24 +501,24 @@ export default function LinearSearchVisualizer() {
                 ) : (
                     // After ready: Always show as dialog button
                     <Dialog open={isProblemOpen} onOpenChange={setIsProblemOpen}>
-                        <DialogTrigger asChild>
-                            <Button
-                                className="h-10 px-4 bg-gradient-to-r from-blue-800 to-indigo-800 hover:from-blue-700 hover:to-indigo-700 border-2 border-blue-500/60 text-blue-100 font-serif font-bold shadow-md hover:shadow-blue-500/20"
-                                style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                            >
-                                Problem Statement
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl bg-gradient-to-br from-blue-950 to-indigo-950 border-blue-700/50">
-                            <DialogHeader>
-                                <DialogTitle className="text-2xl text-blue-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
-                                    {problemTitle}
-                                </DialogTitle>
-                            </DialogHeader>
-                            <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-blue-100 leading-relaxed font-serif" style={{ fontFamily: 'Merriweather, serif' }}>
-                                {problemBody}
-                            </div>
-                        </DialogContent>
+                      <DialogTrigger asChild>
+                        <Button
+                          className="h-10 px-4 bg-gradient-to-r from-blue-800 to-indigo-800 hover:from-blue-700 hover:to-indigo-700 border-2 border-blue-500/60 text-blue-100 font-serif font-bold shadow-md hover:shadow-blue-500/20"
+                          style={{ fontFamily: 'Merriweather, serif', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                        >
+                          Problem Statement
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-3xl bg-gradient-to-br from-blue-950 to-indigo-950 border-blue-700/50">
+                        <DialogHeader>
+                          <DialogTitle className="text-2xl text-blue-100 font-serif tracking-wide" style={{ fontFamily: 'Libre Baskerville, serif' }}>
+                            {problemTitle}
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-blue-100 leading-relaxed font-serif custom-scrollbar" style={{ fontFamily: 'Merriweather, serif' }}>
+                          {problemBody}
+                        </div>
+                      </DialogContent>
                     </Dialog>
                 )}
             </div>

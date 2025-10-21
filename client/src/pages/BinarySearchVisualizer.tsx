@@ -447,6 +447,63 @@ export default function BinarySearchVisualizer() {
 
   return (
     <div className="h-screen relative overflow-hidden md:h-screen">
+      {/* Custom scrollbar styles */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        /* Webkit browsers (Chrome, Safari, Edge) */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8B5CF6, #6366F1);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #7C3AED, #4F46E5);
+        }
+
+        /* Firefox */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #8B5CF6 rgba(0, 0, 0, 0.1);
+        }
+
+        /* For code blocks */
+        .code-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .code-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        .code-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4F46E5, #3730A3);
+            border-radius: 6px;
+        }
+
+        .code-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4338CA, #312E81);
+        }
+
+        .code-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #4F46E5 rgba(0, 0, 0, 0.2);
+        }
+        `
+      }} />
+      
       {/* Hidden audio element for background music */}
       <audio
         ref={audioRef}
@@ -547,7 +604,7 @@ export default function BinarySearchVisualizer() {
                   {problemTitle}
                 </DialogTitle>
               </DialogHeader>
-              <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-amber-100 leading-relaxed font-serif" style={{ fontFamily: 'Merriweather, serif' }}>
+              <div className="max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-amber-100 leading-relaxed font-serif custom-scrollbar" style={{ fontFamily: 'Merriweather, serif' }}>
                 {problemBody}
               </div>
             </DialogContent>
