@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic, log } from "./vite";
+import path from "path";
+import fs from "fs";
 
 // Create express app
 const app = express();
@@ -45,14 +47,17 @@ registerRoutes(app);
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
+    
+    console.error("Unhandled error:", err);
+    
+    res.status(status).json({ 
+        message,
+        error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
 });
 
-// For production on Vercel, serve static files
-if (process.env.NODE_ENV === "production") {
-    serveStatic(app);
-}
+// Serve static files and handle all routes
+serveStatic(app);
 
 // Export the app for Vercel as a function handler
 export default (req: Request, res: Response) => {
