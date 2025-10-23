@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { serveStatic, log } from "./vite";
 
 // Create express app
 const app = express();
@@ -54,13 +54,7 @@ if (process.env.NODE_ENV === "production") {
     serveStatic(app);
 }
 
-// Export the app for Vercel
-export default app;
-
-// For local development
-if (process.env.NODE_ENV !== "production") {
-    const port = parseInt(process.env.PORT || '5000', 10);
-    app.listen(port, "localhost", () => {
-        log(`Server running on port ${port}`);
-    });
-}
+// Export the app for Vercel as a function handler
+export default (req: Request, res: Response) => {
+    return app(req, res);
+};
