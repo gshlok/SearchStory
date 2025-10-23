@@ -81,7 +81,8 @@ export async function setupVite(app: Express): Promise<Server> {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  // Use the dist/public directory where Vite builds the client
+  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
