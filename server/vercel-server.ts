@@ -1,8 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic, log } from "./vite";
-import path from "path";
-import fs from "fs";
 
 // Create express app
 const app = express();
@@ -60,6 +58,4 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 serveStatic(app);
 
 // Export the app for Vercel as a function handler
-export default (req: Request, res: Response) => {
-    return app(req, res);
-};
+export default app;
