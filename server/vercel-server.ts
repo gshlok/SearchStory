@@ -1,61 +1,28 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { serveStatic, log } from "./vite";
+import path from "path";
+import fs from "fs";
 
 // Create express app
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Logging middleware
-app.use((req, res, next) => {
-    const start = Date.now();
-    const path = req.path;
-    let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-    const originalResJson = res.json;
-    res.json = function (bodyJson, ...args) {
-        capturedJsonResponse = bodyJson;
-        return originalResJson.apply(res, [bodyJson, ...args]);
-    };
-
-    res.on("finish", () => {
-        const duration = Date.now() - start;
-        if (path.startsWith("/api")) {
-            let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-            if (capturedJsonResponse) {
-                logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-            }
-
-            if (logLine.length > 80) {
-                logLine = logLine.slice(0, 79) + "…";
-            }
-
-            log(logLine);
-        }
-    });
-
-    next();
-});
+app.use(express.static(path.join(process.cwd(), "dist", "public")));
 
 // Register API routes
 registerRoutes(app);
 
-// Error handling middleware
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    
-    console.error("Unhandled error:", err);
-    
-    res.status(status).json({ 
-        message,
-        error: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
-});
-
 // Serve static files and handle all routes
-serveStatic(app);
+app.use("*", (req, res) => {
+  // Try to serve static file first
+  const staticPath = path.join(process.cwd(), "dist", "public", req.path);
+  if (fs.existsSync(staticPath) && fs.statSync(staticPath).isFile()) {
+    return res.sendFile(staticPath);
+  }
+  
+  // Otherwise serve index.html for client-side routing
+  res.sendFile(path.join(process.cwd(), "dist", "public", "index.html"));
+});
 
 // Export the app for Vercel as a function handler
 export default app;

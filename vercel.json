@@ -1,30 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "dist/vercel-server.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "client/**",
-                    "server/**",
-                    "shared/**",
-                    "attached_assets/**",
-                    "dist/**"
-                ]
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "dist/vercel-server.js"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "dist/vercel-server.js"
-        }
-    ],
-    "buildCommand": "npm run build && npm run build:vercel",
-    "outputDirectory": "dist/public"
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/vercel-server.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/vercel-server.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/server/vercel-server.ts"
+    }
+  ]
 }

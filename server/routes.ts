@@ -35,8 +35,9 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       // Try multiple possible paths for the problem statement file
       const possiblePaths = [
-        path.resolve(import.meta.dirname, "..", "problem_statement.txt"),
-        path.resolve(import.meta.dirname, "..", "client", "public", "problem_statement.txt")
+        path.join(process.cwd(), "problem_statement.txt"),
+        path.join(process.cwd(), "client", "public", "problem_statement.txt"),
+        path.join(process.cwd(), "dist", "public", "problem_statement.txt")
       ];
 
       let filePath = "";
