@@ -33,22 +33,31 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Serve the latest problem statement from the repository root
   app.get("/api/problem-statement", async (_req, res) => {
     try {
-      const filePath = path.resolve(import.meta.dirname, "..", "problem_statement.txt");
-      console.log("Attempting to read problem statement from:", filePath);
+      // Try multiple possible paths for the problem statement file
+      const possiblePaths = [
+        path.resolve(import.meta.dirname, "..", "problem_statement.txt"),
+        path.resolve(import.meta.dirname, "..", "client", "public", "problem_statement.txt")
+      ];
 
-      // Check if file exists
-      if (!fs.existsSync(filePath)) {
-        console.error("Problem statement file not found at:", filePath);
-        // Return a clear error message as plain text
+      let filePath = "";
+      for (const possiblePath of possiblePaths) {
+        if (fs.existsSync(possiblePath)) {
+          filePath = possiblePath;
+          break;
+        }
+      }
+
+      if (!filePath) {
+        console.error("Problem statement file not found at any expected location");
         return res.type("text/plain").status(404).send("Problem statement file not found.");
       }
 
+      console.log("Attempting to read problem statement from:", filePath);
       const text = await fs.promises.readFile(filePath, "utf-8");
       console.log("Successfully read problem statement, length:", text.length);
       res.type("text/plain").send(text);
     } catch (err) {
       console.error("Error reading problem statement:", err);
-      // Always return plain text even in error cases
       res.type("text/plain").status(500).send("Failed to load problem statement.");
     }
   });

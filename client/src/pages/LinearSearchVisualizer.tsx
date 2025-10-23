@@ -257,6 +257,7 @@ export default function LinearSearchVisualizer() {
         setSpriteState('IDLE');
         setSpritePosition({ x: 100, y: 450 }); // Keep sprite in adjusted position
         setIsAnimationComplete(false); // Animation starts, so it's not complete
+        setCurrentIndex(null); // Reset current index
 
         // Automatically trigger the first step
         setTimeout(() => {
