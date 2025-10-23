@@ -1,0 +1,30 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "server/vercel-server.ts",
+            "use": "@vercel/node",
+            "config": {
+                "includeFiles": [
+                    "dist/**",
+                    "client/**",
+                    "server/**",
+                    "shared/**",
+                    "attached_assets/**"
+                ]
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "server/vercel-server.ts"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "server/vercel-server.ts"
+        }
+    ],
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist/public"
+}

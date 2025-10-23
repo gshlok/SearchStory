@@ -12,6 +12,7 @@ An immersive, interactive visualization of both binary and linear search algorit
 - [Installation](#installation)
 - [Development](#development)
 - [Building for Production](#building-for-production)
+- [Deployment](#deployment)
 - [Project Structure](#project-structure)
 - [How It Works](#how-it-works)
 - [Design Guidelines](#design-guidelines)
@@ -96,8 +97,36 @@ This will build the frontend using Vite and output everything to the `dist/` dir
 To run the production build locally:
 
 ```bash
-npm run preview
+npm run start
 ```
+
+## Deployment
+
+### Vercel Deployment
+
+This application can be deployed to Vercel with zero configuration:
+
+1. Push your code to a GitHub repository
+2. Log in to your Vercel account
+3. Create a new project and import your repository
+4. Vercel will automatically detect the project settings and deploy it
+
+Alternatively, you can use the Vercel CLI:
+
+```bash
+# Install Vercel CLI globally
+npm install -g vercel
+
+# Deploy the project
+vercel
+```
+
+The `vercel.json` configuration file handles:
+- Building both frontend and backend
+- Routing API requests to the correct endpoints
+- Serving static assets
+
+For detailed instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](VERCEL_DEPLOYMENT_GUIDE.md).
 
 ## Project Structure
 
